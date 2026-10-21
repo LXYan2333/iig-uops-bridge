@@ -26,6 +26,8 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      - name: Test data downloader
+        run: python3 -m unittest discover -s tests -p '*_test.py'
       - name: Build and run unit and DOM integration tests
         run: npm test
       - name: Install browser test dependencies

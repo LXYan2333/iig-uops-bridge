@@ -88,7 +88,9 @@ npm run data:update
 npm test
 ```
 
-下载工具从 Intel 当前页面发现数据文件地址；保留稳定的本地文件名，但从 XML 内容读取真实版本。也可使用已有下载资料运行 `npm run data:build`。原始数据只保存在已忽略的 `research/` 中。分发更新时应修改 `package.json` 的版本并重新构建。
+下载工具从 Intel 当前页面及渲染脚本发现数据地址。主站不可用时，依次尝试 `www.intel.com`、`www.intel.cn` 的 Intel 官方静态渲染脚本，再从脚本中读取 XML 地址。临时网络或服务器故障会有限重试；HTTP 403 直接尝试下一个来源。全部来源失败时终止更新，保留原有数据。保留稳定的本地文件名，但从 XML 内容读取真实版本。也可使用已有下载资料运行 `npm run data:build`。原始数据只保存在已忽略的 `research/` 中。分发更新时应修改 `package.json` 的版本并重新构建。
+
+下载工具回归测试：`python3 -m unittest discover -s tests -p '*_test.py'`（Python 3.9+），模拟来源拒绝访问、后备来源、临时故障及保留原有下载资料。
 
 模块分工：`src/match.ts` 负责匹配，`src/parser.ts` / `src/service.ts` 负责读取与缓存，`src/guide.ts` 适配 Guide，`src/main.ts` / `src/ui.ts` 管理三种视图。索引生成工具在 `scripts/`。
 

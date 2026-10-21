@@ -88,7 +88,9 @@ npm run data:update
 npm test
 ```
 
-The downloader discovers the data URL from Intel's current page. It keeps a stable local filename while reading the actual version from the XML. To reuse downloaded materials, run `npm run data:build`. Raw downloads are stored in the ignored `research/` directory. Bump the version in `package.json` and rebuild before distributing an update.
+The downloader discovers the data URL from Intel's current page and renderer. If the main site is unavailable, it tries Intel's official static renderer on `www.intel.com`, then `www.intel.cn`, and reads the XML URL from that renderer. It retries temporary network/server failures; HTTP 403 switches to the next source without repeated retries. If all sources fail, the update fails and retains the previous data. It keeps a stable local filename while reading the actual version from the XML. To reuse downloaded materials, run `npm run data:build`. Raw downloads are stored in the ignored `research/` directory. Bump the version in `package.json` and rebuild before distributing an update.
+
+Run downloader regression tests with `python3 -m unittest discover -s tests -p '*_test.py'` (Python 3.9+). These tests simulate blocked sources, fallback, transient failures, and preservation of previous downloads.
 
 Code layout:
 

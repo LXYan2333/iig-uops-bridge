@@ -32,6 +32,8 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
+      - name: Test data downloader
+        run: python3 -m unittest discover -s tests -p '*_test.py'
       - name: Download official data and regenerate index
         run: npm run data:update
       - name: Check for index changes
