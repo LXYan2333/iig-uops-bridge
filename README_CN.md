@@ -4,7 +4,7 @@
 
 在 Intel Intrinsics Guide 中直接查看所选微架构的 uops.info 实测数据，并跳转到对应指令页面。
 
-<img alt="image" src="https://github.com/user-attachments/assets/06fb0c58-25cd-479b-8c20-4351bc1e486e" />
+<img alt="image" src="https://github.com/user-attachments/assets/05d28eeb-face-4f68-9111-a7b86419bca6" />
 
 ## 安装
 
