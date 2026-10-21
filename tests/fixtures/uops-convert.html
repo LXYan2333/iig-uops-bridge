@@ -1,0 +1,296 @@
+<html>
+<head>
+<title>VCVTQQ2PD (ZMM, ZMM)</title>
+<link rel="stylesheet" href="https://www.jacklmoore.com/colorbox/example2/colorbox.css"/><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.colorbox/1.6.4/jquery.colorbox-min.js"></script><script>$(document).ready(function(){$(".iframe").colorbox({iframe:true, width:"90%", height:"90%", title:function () {return '<a href="' + this.href + '" target="_blank">' + this.href + '</a>'}});});$(document).on("cbox_open",function(){$("body").css({overflow:"hidden"})}).on("cbox_closed",function(){$("body").css({overflow:""})})</script><script src="/m.js"></script>
+</head>
+<body>
+<noscript><p><img src="https://epica.cs.uni-saarland.de/piwik.php?idsite=19&amp;rec=1" style="border:0;" alt="" /></p></noscript>
+<h1>VCVTQQ2PD (ZMM, ZMM)</h1>
+<hr>
+<table>
+<tr><td>Summary:&nbsp;</td><td>"Convert Packed Quadword Integers to Packed Double Precision Floating-PointValues"</td></tr>
+<tr><td>Reference:&nbsp;</td><td><a class="iframe" href="https://www.felixcloutier.com/x86/vcvtqq2pd">https://www.felixcloutier.com/x86/vcvtqq2pd</a></td></tr>
+<tr><td>Extension:&nbsp;</td><td>AVX512EVEX</td></tr>
+<tr><td>Category:&nbsp;</td><td>CONVERT</td></tr>
+<tr><td>ISA-Set:&nbsp;</td><td>AVX512DQ_512</td></tr>
+<tr><td>CPL:&nbsp;</td><td>3</td></tr>
+<tr><td>iform:&nbsp;</td><td>VCVTQQ2PD_ZMMf64_MASKmskw_ZMMi64_AVX512</td></tr>
+<tr><td>iclass:&nbsp;</td><td>VCVTQQ2PD</td></tr>
+<tr><td>ASM:&nbsp;</td><td>VCVTQQ2PD</td></tr>
+</table>
+<h2>Operands</h2>
+<ul>
+<li>Operand 1 (w): Register (ZMM0, ZMM1, ZMM2, ZMM3, ZMM4, ZMM5, ZMM6, ZMM7, ZMM8, ZMM9, ZMM10, ZMM11, ZMM12, ZMM13, ZMM14, ZMM15, ZMM16, ZMM17, ZMM18, ZMM19, ZMM20, ZMM21, ZMM22, ZMM23, ZMM24, ZMM25, ZMM26, ZMM27, ZMM28, ZMM29, ZMM30, ZMM31)</li>
+<li>Operand 2 (r): Register (ZMM0, ZMM1, ZMM2, ZMM3, ZMM4, ZMM5, ZMM6, ZMM7, ZMM8, ZMM9, ZMM10, ZMM11, ZMM12, ZMM13, ZMM14, ZMM15, ZMM16, ZMM17, ZMM18, ZMM19, ZMM20, ZMM21, ZMM22, ZMM23, ZMM24, ZMM25, ZMM26, ZMM27, ZMM28, ZMM29, ZMM30, ZMM31)</li>
+</ul>
+<hr><h2>Available performance data </h2><ul>
+<li><a href="#EMR">Emerald Rapids</a></li>
+<li><a href="#ADL-P">Alder Lake-P</a></li>
+<li><a href="#RKL">Rocket Lake</a></li>
+<li><a href="#TGL">Tiger Lake</a></li>
+<li><a href="#ICL">Ice Lake</a></li>
+<li><a href="#CLX">Cascade Lake</a></li>
+<li><a href="#CNL">Cannon Lake</a></li>
+<li><a href="#SKX">Skylake-X</a></li>
+<li><a href="#ZEN5">AMD Zen 5</a></li>
+<li><a href="#ZEN4">AMD Zen 4</a></li>
+</ul>
+<hr><h2 id="EMR">Emerald Rapids</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/EMR/VCVTQQ2PD_ZMM_ZMM-Measurements.html#lat2->1">Latency operand 2 &rarr; 1:</a>
+ 4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/EMR/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/EMR/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/EMR/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/EMR/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Port usage:</a> 1*p05</li>
+</ul>
+</ul>
+<hr><h2 id="ADL-P">Alder Lake-P</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/ADL-P/VCVTQQ2PD_ZMM_ZMM-Measurements.html#lat2->1">Latency operand 2 &rarr; 1:</a>
+ 4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 1.00</li>
+<li><a href="../html-tp/ADL-P/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (loop):</a> 1.00</li>
+<li><a href="../html-tp/ADL-P/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (unrolled):</a> 1.00</li>
+</ul></li>
+<li><a href="../html-tp/ADL-P/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/ADL-P/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Port usage:</a> 1*p0</li>
+</ul>
+</ul>
+<hr><h2 id="RKL">Rocket Lake</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/RKL/VCVTQQ2PD_ZMM_ZMM-Measurements.html#lat2->1">Latency operand 2 &rarr; 1:</a>
+ 4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 1.00</li>
+<li><a href="../html-tp/RKL/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (loop):</a> 1.00</li>
+<li><a href="../html-tp/RKL/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (unrolled):</a> 1.00</li>
+</ul></li>
+<li><a href="../html-tp/RKL/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/RKL/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Port usage:</a> 1*p0</li>
+</ul>
+</ul>
+<hr><h2 id="TGL">Tiger Lake</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/TGL/VCVTQQ2PD_ZMM_ZMM-Measurements.html#lat2->1">Latency operand 2 &rarr; 1:</a>
+ 4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 1.00</li>
+<li><a href="../html-tp/TGL/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (loop):</a> 1.00</li>
+<li><a href="../html-tp/TGL/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (unrolled):</a> 1.00</li>
+</ul></li>
+<li><a href="../html-tp/TGL/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/TGL/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Port usage:</a> 1*p0</li>
+</ul>
+</ul>
+<hr><h2 id="ICL">Ice Lake</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/ICL/VCVTQQ2PD_ZMM_ZMM-Measurements.html#lat2->1">Latency operand 2 &rarr; 1:</a>
+ 4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 1.00</li>
+<li><a href="../html-tp/ICL/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (loop):</a> 1.00</li>
+<li><a href="../html-tp/ICL/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (unrolled):</a> 1.00</li>
+</ul></li>
+<li><a href="../html-tp/ICL/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/ICL/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Port usage:</a> 1*p0</li>
+</ul>
+</ul>
+<hr><h2 id="CLX">Cascade Lake</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/CLX/VCVTQQ2PD_ZMM_ZMM-Measurements.html#lat2->1">Latency operand 2 &rarr; 1:</a>
+ 4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/CLX/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/CLX/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/CLX/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/CLX/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Port usage:</a> 1*p05</li>
+</ul>
+</ul>
+<hr><h2 id="CNL">Cannon Lake</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/CNL/VCVTQQ2PD_ZMM_ZMM-Measurements.html#lat2->1">Latency operand 2 &rarr; 1:</a>
+ 4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 1.00</li>
+<li><a href="../html-tp/CNL/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (loop):</a> 1.00</li>
+<li><a href="../html-tp/CNL/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (unrolled):</a> 1.00</li>
+</ul></li>
+<li><a href="../html-tp/CNL/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/CNL/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Port usage:</a> 1*p0</li>
+</ul>
+</ul>
+<hr><h2 id="SKX">Skylake-X</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/SKX/VCVTQQ2PD_ZMM_ZMM-Measurements.html#lat2->1">Latency operand 2 &rarr; 1:</a>
+ 4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/SKX/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/SKX/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/SKX/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/SKX/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Port usage:</a> 1*p05</li>
+</ul>
+<li>IACA 2.3</li>
+<ul>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/SKX/VCVTQQ2PD_ZMM_ZMM-IACA2.3.html">IACA:</a> 0.50
+</li>
+</ul></li>
+<li><a href="../html-tp/SKX/VCVTQQ2PD_ZMM_ZMM-IACA2.3.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/SKX/VCVTQQ2PD_ZMM_ZMM-IACA2.3.html">Port usage:</a> 1*p05</li>
+</ul>
+<li>IACA 3.0</li>
+<ul>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/SKX/VCVTQQ2PD_ZMM_ZMM-IACA3.0.html">IACA:</a> 0.49
+</li>
+</ul></li>
+<li><a href="../html-tp/SKX/VCVTQQ2PD_ZMM_ZMM-IACA3.0.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/SKX/VCVTQQ2PD_ZMM_ZMM-IACA3.0.html">Port usage:</a> 1*p05</li>
+</ul>
+</ul>
+<hr><h2 id="ZEN5">AMD Zen 5</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/ZEN5/VCVTQQ2PD_ZMM_ZMM-Measurements.html#lat2->1">Latency operand 2 &rarr; 1:</a>
+ 3</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/ZEN5/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/ZEN5/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/ZEN5/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+</ul></li>
+<li><a href="../html-ports/ZEN5/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Port usage:</a> 1*FP23</li>
+</ul>
+<li><a href="https://docs.amd.com/v/u/en-US/58455_1.00" target="_blank">Documentation</a></li>
+<ul>
+<li>Latency: 3</li>
+<li>Throughput: 0.50</li>
+<li>Number of  &mu;ops: 1</li>
+<li>Port usage: FP2/3</li>
+</ul>
+</ul>
+<hr><h2 id="ZEN4">AMD Zen 4</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/ZEN4/VCVTQQ2PD_ZMM_ZMM-Measurements.html#lat2->1">Latency operand 2 &rarr; 1:</a>
+ 3</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/ZEN4/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (loop):</a> 1.00</li>
+<li><a href="../html-tp/ZEN4/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Measured (unrolled):</a> 1.00</li>
+</ul></li>
+<li><a href="../html-tp/ZEN4/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+</ul></li>
+<li><a href="../html-ports/ZEN4/VCVTQQ2PD_ZMM_ZMM-Measurements.html">Port usage:</a> 1*FP23</li>
+</ul>
+<li><a href="http://web.archive.org/web/20230108094512/https://www.amd.com/system/files/TechDocs/57647.zip" target="_blank">Documentation</a></li>
+<ul>
+<li>Latency: 3</li>
+<li>Throughput: 1.00</li>
+<li>Number of  &mu;ops: 1 </li>
+<li>Port usage: FP2/3 </li>
+</ul>
+</ul></body>
+</html>

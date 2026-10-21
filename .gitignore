@@ -1,0 +1,6 @@
+# Downloaded reference material and planning research.
+/research/
+/node_modules/
+/test-results/
+/playwright-report/
+/.cache/

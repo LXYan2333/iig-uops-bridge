@@ -1,0 +1,112 @@
+# Intel Guide → uops.info
+
+[English](README.md) | 简体中文
+
+在 Intel Intrinsics Guide 中直接查看所选微架构的 uops.info 实测数据，并跳转到对应指令页面。
+
+## 安装
+
+1. 安装适用于浏览器的 Tampermonkey：[Firefox](https://addons.mozilla.org/firefox/addon/tampermonkey/) 或 [Chrome / Chromium](https://www.tampermonkey.net/)。
+2. **Chrome / Chromium 用户**：打开 `chrome://extensions`，进入 **Tampermonkey → 详情**，开启 **允许运行用户脚本（Allow User Scripts）**。这是浏览器的扩展权限，与 Tampermonkey 仪表板中启用某个脚本是两回事。缺少运行用户脚本的权限时，即使安装成功，Guide 页面也可能没有任何效果。如果当前浏览器版本没有这个开关，请参照 [Tampermonkey 官方配置说明](https://www.tampermonkey.net/faq.php#Q209)。Firefox 用户可跳过此步骤。
+3. 打开 Tampermonkey 仪表板 → **实用工具 → 从文件导入**，选择本项目的 [`dist/iig-uops-bridge.user.js`](dist/iig-uops-bridge.user.js)，确认安装。也可以新建脚本，用此文件的**完整内容**替换编辑器中的模板并保存。
+4. 刷新 [Intel Intrinsics Guide](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html)，修改上述浏览器权限后也需要刷新页面。搜索框下面会出现 **uops.info 桥接**工具栏。
+
+安装使用的是已经构建好的单文件脚本，不需要 Node.js、Python 或本地服务。脚本没有配置远程自动更新地址；更新时重新导入新文件。
+
+## 使用
+
+- **语言**：支持 English 和简体中文，首次使用跟随浏览器首选语言（其他语言默认英文）。工具栏可随时切换并保存偏好，已展开的结果和侧栏同步更新，保留所选变体和参考架构。
+- **感兴趣架构**：通过复选框选择多个 Intel 或 AMD 微架构，不设主架构。每个架构占对比表的一行，选择会保存。旧版单架构设置自动转成列表，新安装默认勾选 Tiger Lake。全部取消后暂不读取测量数据，直到再次选择架构。P 核和 E 核分开列出。
+- **展示**：详情内自动显示、点击后展开、固定右侧栏，三种模式随时切换。侧栏跟随最近打开或主动选中的 intrinsic；窄窗口上侧栏悬浮显示，可收起或切换模式。
+- **其他变体 / 手动选择**：通过单选按钮列表选择寄存器、内存、广播、mask/maskz、舍入等形式。手动查看的相关变体会明确标记，不会替换成“已确认匹配”。
+- **测量细节**：展开操作数之间的依赖延迟、loop/unrolled 吞吐、端口估算、retire slots、MITE、MS 等原页指标。
+- **架构链接**：直接点击对比表中的架构名称，在新标签页打开对应指令与架构章节。表格搜索链接同时启用所有当前显示的架构、实测来源和指令集筛选。
+- **参考架构**：也支持多选，临时勾选的架构作为额外行显示，不改变已保存的选择。缺少测量数据的架构逐行标注；无测量数据不等于处理器不支持该指令。
+- **设置 / 数据**：可勾选隐藏 Intel Guide 自带的 **Latency and Throughput** 标题和性能表格，默认关闭，即时生效并保存偏好。取消勾选即可恢复，uops.info 数据保持显示。还可查看索引版本、清理性能缓存，每条结果也可以单独刷新。
+
+对比表每行显示一个架构，各架构的测量细节可分别展开。窄窗口下表格可横向滚动。多个架构共用同一次请求及页面缓存。
+
+吞吐的单位是 **cycles/instruction**，优先显示实测 unrolled，缺失时显示明确标注的 loop。端口计算的吞吐单独列在详情中。μops 摘要采用 Executed，retire slots 单独显示。延迟保留 `≤`、范围和原始附注；多条依赖的数值不会被合并成整个 intrinsic 的统一延迟。
+
+## 匹配方式与边界
+
+1. 使用 intrinsic 名称、签名、CPUID 和 Instruction 原文识别条目，再读取对应的 XED 标识。页面与内置索引不一致时退回页面描述，并显示提示。
+2. XED 只是第一层依据；继续区分各操作数宽度、VEX/EVEX、掩码、清零、广播和 ER/SAE。没有可信 XED 时，只把结构一致的结果标为**推断匹配**。
+3. 并列候选需要手动选择，尤其是 rounding/SAE 参数值未知的情况。目标架构有没有数据不影响语义匹配的排序。
+
+已覆盖的典型情况：
+
+| Intel Guide 条目 | 默认对应与处理 |
+| --- | --- |
+| `_mm512_cvtepi64_pd` | `VCVTQQ2PD (ZMM, ZMM)`；使用已核验的 XED 类型字段别名。`M512`、`M64_1to8` 等形式在其他变体中。 |
+| `_mm512_maskz_cvtepi64_pd` | `VCVTQQ2PD_Z (ZMM, K, ZMM)`，与普通或合并掩码形式分开。 |
+| `_mm512_i64gather_pd` | `VGATHERQPD (ZMM, K, VSIB_ZMM)`；说明 Guide 的 `vm32z` 写法与其 XED/64 位索引信息的差异。 |
+| AVX2 masked gather | 向量掩码寄存器属于普通操作数，不误当成 EVEX 的 K 掩码。 |
+| 多种 FMA 映射 | 分组列出可能指令，具体选择由编译器和上下文决定。 |
+| reduce、SVML 等 sequence | 明确提示指令序列；不把单条数据当作整体成本，不直接相加。 |
+
+匹配描述的是 Guide 所列的指令形式，不能保证编译器在具体上下文中一定选择它。无法确认时保留候选或搜索入口；不会通过删除 `V` 前缀或忽略不一致的寄存器宽度来强行匹配。
+
+## 数据、缓存与权限
+
+- 内置索引的 Intel Guide 版本、uops.info 日期和来源哈希记录在 `src/generated/index.json` 中，也可在“设置 / 数据”查看版本。仅收录官方 XML 明确提供详情 URL 的指令变体。
+- 浏览器按需读取 uops.info 指令详情页，只提取 **Measurements**。不混入 IACA 或 Documentation，不执行远程页面脚本，也不下载约 143 MB 的完整 XML。
+- 请求按指令去重，最多同时 3 个。按变体缓存整页各架构数据，有效期 7 天；刷新失败可显示明确标注的旧缓存。
+- 权限仅用于 Intel Guide 页面注入、uops.info 跨站请求、脚本设置与缓存。跨站请求不携带登录凭据，没有自建后端或遥测。
+- 索引随脚本构建更新；“刷新数据”更新的是性能页面缓存，不更新匹配索引。官网内容变更导致解析失败时，会显示错误及原页链接，而不会把解析失败伪装成架构无数据。
+
+首版匹配 Intel 官方 Guide 路径；第三方镜像和本地离线 Guide 不在支持范围内。
+
+## 开发与构建
+
+需要 Node.js 20.19+、npm。重新生成索引另需 Python 3.9+。
+
+```bash
+npm ci
+npm run build
+npm test
+```
+
+产物为 `dist/iig-uops-bridge.user.js`。精简索引已纳入项目，正常构建和测试不依赖被忽略的 `research/` 目录。`npm test` 先构建当前源码，再运行单元、解析器及完整脚本集成测试。
+
+浏览器测试使用 Intel 原版渲染脚本与小型数据快照，不依赖官网实时可用性；GM 接口在测试中模拟。通过 Tampermonkey 导入脚本及真实跨站请求需要单独手动验证。
+
+```bash
+npx playwright install chromium firefox
+npm run test:browser -- --project=firefox
+npm run test:browser -- --project=chromium
+# 已安装上述两个浏览器时执行完整检查：
+npm run check
+```
+
+测试内容包括：XED 别名、不同宽度/编码/掩码、gather、多个候选、架构缺失、延迟上界、数据来源隔离、缓存失效、请求去重/并发限制、旧异步结果隔离、三种视图切换，以及 Guide 重新渲染后的注入。
+
+更新官方数据并重新生成索引：
+
+```bash
+npm run data:update
+npm test
+```
+
+下载工具从 Intel 当前页面发现数据文件地址；保留稳定的本地文件名，但从 XML 内容读取真实版本。也可使用已有下载资料运行 `npm run data:build`。原始数据只保存在已忽略的 `research/` 中。分发更新时应修改 `package.json` 的版本并重新构建。
+
+模块分工：`src/match.ts` 负责匹配，`src/parser.ts` / `src/service.ts` 负责读取与缓存，`src/guide.ts` 适配 Guide，`src/main.ts` / `src/ui.ts` 管理三种视图。索引生成工具在 `scripts/`。
+
+界面文案集中在 `src/i18n.ts`，以中文原文为消息键，英文目录由测试校验完整性及插值参数一致性。指令名称与 uops.info 原始测量细节保留来源文本；不同语言共用测量缓存。
+
+## GitHub Actions
+
+推送到 GitHub 后，可使用两条工作流：
+
+- **Build and test**（`.github/workflows/build.yml`）：提交、PR 和手动触发时构建脚本，运行单元/DOM 测试及 Chromium、Firefox 浏览器测试。成功后上传可安装脚本，构建产物保留 30 天。
+- **Update instruction index**（`.github/workflows/update-index.yml`）：每周一 **UTC 03:17（北京时间 11:17）**执行，也支持手动触发。下载官方资料、验证并生成索引。索引变化时递增补丁版本、重新构建和测试，并在 `automation/update-instruction-index` 分支创建或更新同一个 PR。没有变化就不创建新版本或新 PR；下载或测试失败会停止更新。原始下载资料保持忽略。
+
+启用前，将工作流放到仓库默认分支，在 **Settings → Actions → General → Workflow permissions** 中允许 GitHub Actions 创建 PR。更新任务申请仓库内容和 PR 的写权限，普通构建只使用读取权限；无需配置个人 token 或额外 secrets。参见 [create-pull-request 权限要求](https://github.com/peter-evans/create-pull-request#workflow-permissions)。
+
+首次可在 **Actions → Update instruction index → Run workflow** 手动运行。审核并合并生成的 PR 后，默认分支的索引与脚本才会更新。GitHub 可能要求审批由 `GITHUB_TOKEN` 创建的 PR 的 CI 运行；出现提示时点击 PR 中的 **Approve workflows to run**。更新工作流自身已经在创建 PR 前执行测试。参见 [GitHub 工作流触发规则](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow#triggering-a-workflow-from-a-workflow)。
+
+从成功运行的工作流下载 artifact，解压后将 `iig-uops-bridge.user.js` 导入 Tampermonkey。工作流不会自动合并 PR、发布 GitHub Release，或更新浏览器内已安装的脚本。上游网站不可用时，更新失败不会改变默认分支；恢复后可重新运行。定时任务只在默认分支运行，可能延迟或因仓库长期无活动而被停用；停止更新时请检查 Actions 页面。
+
+## 来源
+
+[Intel Intrinsics Guide](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html)、[uops.info XML](https://uops.info/xml.html)、[uops.info 表格](https://uops.info/table.html)。生成索引保留输入文件的 SHA-256；测试快照的来源及 jQuery 原始许可说明见 `tests/fixtures/SOURCES.txt` 与对应文件。新增代码不把这些第三方数据或脚本重新声明为其他许可证。

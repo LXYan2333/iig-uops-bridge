@@ -1,0 +1,103 @@
+name: Update instruction index
+
+on:
+  schedule:
+    # Mondays, 03:17 UTC (11:17 Asia/Shanghai).
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: update-instruction-index
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Download official data and regenerate index
+        run: npm run data:update
+      - name: Check for index changes
+        id: index
+        shell: bash
+        run: |
+          if git diff --quiet -- src/generated/index.json; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            echo 'The instruction index is already current.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Install dependencies
+        if: steps.index.outputs.changed == 'true'
+        run: npm ci
+      - name: Increment userscript patch version
+        if: steps.index.outputs.changed == 'true'
+        run: npm version patch --no-git-tag-version --ignore-scripts
+      - name: Build and run unit and DOM integration tests
+        if: steps.index.outputs.changed == 'true'
+        run: npm test
+      - name: Install browser test dependencies
+        if: steps.index.outputs.changed == 'true'
+        run: npx playwright install --with-deps chromium firefox
+      - name: Run browser tests
+        if: steps.index.outputs.changed == 'true'
+        run: |
+          export CHROMIUM_PATH="$(node -p 'require("playwright").chromium.executablePath()')"
+          npx playwright test
+      - name: Upload updated userscript
+        if: steps.index.outputs.changed == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: iig-uops-bridge-index-update-${{ github.run_id }}
+          path: dist/iig-uops-bridge.user.js
+          if-no-files-found: error
+          retention-days: 30
+      # Also run on unchanged data so the action can close an obsolete update PR.
+      - name: Create or refresh index update pull request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: automation/update-instruction-index
+          base: ${{ github.event.repository.default_branch }}
+          delete-branch: true
+          add-paths: |
+            src/generated/index.json
+            dist/iig-uops-bridge.user.js
+            package.json
+            package-lock.json
+          commit-message: Update instruction index and rebuild userscript
+          title: Update instruction index and rebuild userscript
+          body: |
+            Refresh the bundled Intel Intrinsics Guide and uops.info matching index from official sources.
+
+            This update increments the package patch version and rebuilds the installable userscript.
+            Downloaded source files remain in the ignored research directory.
+
+            Validation before creating this PR:
+            - TypeScript build and unit/DOM integration tests
+            - Chromium and Firefox browser tests with simulated GM APIs
+
+            Review index changes and merge when ready. The workflow does not merge or publish releases automatically.
+      - name: Upload browser failure details
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: index-update-browser-failures-${{ github.run_id }}
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7

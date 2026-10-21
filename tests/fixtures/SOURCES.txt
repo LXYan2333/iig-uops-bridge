@@ -1,0 +1,10 @@
+Test fixtures only; retain upstream notices.
+Intel Guide 3.6.9: https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html
+The guide HTML app fragment, renderer, stylesheet and selected XML records are copied from Intel's public Guide.
+jQuery 1.10.1 is the Guide dependency; its MIT license notice is retained in jquery.js.
+uops.info HTML snapshots (2026-10-21):
+https://uops.info/html-instr/VCVTQQ2PD_ZMM_ZMM.html
+https://uops.info/html-instr/VCVTQQ2PD_ZMM_M64_1to8.html
+https://uops.info/html-instr/VCVTQQ2PD_Z_ZMM_K_ZMM.html
+https://uops.info/html-instr/VGATHERQPD_ZMM_K_VSIB_ZMM.html
+These snapshots support offline parser/regression tests; they are not executed in the production script.

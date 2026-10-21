@@ -1,0 +1,50 @@
+name: Build and test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Build and run unit and DOM integration tests
+        run: npm test
+      - name: Install browser test dependencies
+        run: npx playwright install --with-deps chromium firefox
+      - name: Run browser tests
+        run: |
+          export CHROMIUM_PATH="$(node -p 'require("playwright").chromium.executablePath()')"
+          npx playwright test
+      - name: Upload installable userscript
+        uses: actions/upload-artifact@v7
+        with:
+          name: iig-uops-bridge-${{ github.sha }}
+          path: dist/iig-uops-bridge.user.js
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload browser failure details
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: browser-failures-${{ github.run_id }}
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7

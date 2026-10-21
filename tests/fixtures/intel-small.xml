@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='utf-8'?>
+<intrinsics_list date="07/12/2024" version="3.6.9"><intrinsic name="_mm256_add_ps" tech="AVX_ALL">
+	<return etype="FP32" type="__m256" varname="dst" />
+	<parameter etype="FP32" type="__m256" varname="a" />
+	<parameter etype="FP32" type="__m256" varname="b" />
+	<description>Add packed single-precision (32-bit) floating-point elements in "a" and "b", and store the results in "dst".</description>
+	<operation>
+FOR j := 0 to 7
+	i := j*32
+	dst[i+31:i] := a[i+31:i] + b[i+31:i]
+ENDFOR
+dst[MAX:256] := 0
+	</operation>
+	<instruction form="ymm, ymm, ymm" name="VADDPS" xed="VADDPS_YMMqq_YMMqq_YMMqq" />
+	<CPUID>AVX</CPUID>
+	<header>immintrin.h</header>
+	<category>Arithmetic</category>
+	</intrinsic>
+	<intrinsic name="_mm256_cvtepi32_pd" tech="AVX_ALL">
+	<return etype="FP64" type="__m256d" varname="dst" />
+	<parameter etype="SI32" type="__m128i" varname="a" />
+	<description>Convert packed signed 32-bit integers in "a" to packed double-precision (64-bit) floating-point elements, and store the results in "dst".</description>
+	<operation>
+FOR j := 0 to 3
+	i := j*32
+	m := j*64
+	dst[m+63:m] := Convert_Int32_To_FP64(a[i+31:i])
+ENDFOR
+dst[MAX:256] := 0
+	</operation>
+	<instruction form="ymm, xmm" name="VCVTDQ2PD" xed="VCVTDQ2PD_YMMqq_XMMdq" />
+	<CPUID>AVX</CPUID>
+	<header>immintrin.h</header>
+	<category>Convert</category>
+	</intrinsic>
+	<intrinsic name="_mm512_cvtepi64_pd" tech="AVX-512">
+	<return etype="FP64" type="__m512d" varname="dst" />
+	<parameter etype="SI64" type="__m512i" varname="a" />
+	<description>Convert packed signed 64-bit integers in "a" to packed double-precision (64-bit) floating-point elements, and store the results in "dst".</description>
+	<operation>
+FOR j := 0 to 7
+	i := j*64
+	dst[i+63:i] := Convert_Int64_To_FP64(a[i+63:i])
+ENDFOR
+dst[MAX:512] := 0
+	</operation>
+	<instruction form="zmm, zmm" name="VCVTQQ2PD" xed="VCVTQQ2PD_ZMMi64_MASKmskw_ZMMf64_AVX512" />
+	<CPUID>AVX512DQ</CPUID>
+	<header>immintrin.h</header>
+	<category>Convert</category>
+	</intrinsic>
+	<intrinsic name="_mm512_maskz_cvtepi64_pd" tech="AVX-512">
+	<return etype="FP64" type="__m512d" varname="dst" />
+	<parameter etype="MASK" type="__mmask8" varname="k" />
+	<parameter etype="SI64" type="__m512i" varname="a" />
+	<description>Convert packed signed 64-bit integers in "a" to packed double-precision (64-bit) floating-point elements, and store the results in "dst" using zeromask "k" (elements are zeroed out when the corresponding mask bit is not set).</description>
+	<operation>
+FOR j := 0 to 7
+	i := j*64
+	IF k[j]
+		dst[i+63:i] := Convert_Int64_To_FP64(a[i+63:i])
+	ELSE
+		dst[i+63:i] := 0
+	FI
+ENDFOR
+dst[MAX:512] := 0
+	</operation>
+	<instruction form="zmm {z}, zmm" name="VCVTQQ2PD" xed="VCVTQQ2PD_ZMMi64_MASKmskw_ZMMf64_AVX512" />
+	<CPUID>AVX512DQ</CPUID>
+	<header>immintrin.h</header>
+	<category>Convert</category>
+	</intrinsic>
+	<intrinsic name="_mm512_i64gather_pd" tech="AVX-512">
+	<return etype="FP64" type="__m512d" varname="dst" />
+	<parameter etype="SI64" type="__m512i" varname="vindex" />
+	<parameter etype="FP64" type="void const*" varname="base_addr" />
+	<parameter etype="IMM" immtype="_MM_INDEX_SCALE" type="int" varname="scale" />
+	<description>Gather double-precision (64-bit) floating-point elements from memory using 64-bit indices. 64-bit elements are loaded from addresses starting at "base_addr" and offset by each 64-bit element in "vindex" (each index is scaled by the factor in "scale"). Gathered elements are merged into "dst". "scale" should be 1, 2, 4 or 8.</description>
+	<operation>
+FOR j := 0 to 7
+	i := j*64
+	m := j*64
+	addr := base_addr + vindex[m+63:m] * ZeroExtend64(scale) * 8
+	dst[i+63:i] := MEM[addr+63:addr]
+ENDFOR
+dst[MAX:512] := 0
+	</operation>
+	<instruction form="zmm, vm32z" name="VGATHERQPD" xed="VGATHERQPD_ZMMf64_MASKmskw_MEMf64_AVX512_VL512" />
+	<CPUID>AVX512F</CPUID>
+	<header>immintrin.h</header>
+	<category>Load</category>
+	</intrinsic>
+	<intrinsic name="_mm512_mask_i64gather_pd" tech="AVX-512">
+	<return etype="FP64" type="__m512d" varname="dst" />
+	<parameter etype="FP64" type="__m512d" varname="src" />
+	<parameter etype="MASK" type="__mmask8" varname="k" />
+	<parameter etype="SI64" type="__m512i" varname="vindex" />
+	<parameter etype="FP64" type="void const*" varname="base_addr" />
+	<parameter etype="IMM" immtype="_MM_INDEX_SCALE" type="int" varname="scale" />
+	<description>Gather double-precision (64-bit) floating-point elements from memory using 64-bit indices. 64-bit elements are loaded from addresses starting at "base_addr" and offset by each 64-bit element in "vindex" (each index is scaled by the factor in "scale"). Gathered elements are merged into "dst" using writemask "k" (elements are copied from "src" when the corresponding mask bit is not set). "scale" should be 1, 2, 4 or 8.</description>
+	<operation>
+FOR j := 0 to 7
+	i := j*64
+	m := j*64
+	IF k[j]
+		addr := base_addr + vindex[m+63:m] * ZeroExtend64(scale) * 8
+		dst[i+63:i] := MEM[addr+63:addr]
+	ELSE
+		dst[i+63:i] := src[i+63:i]
+	FI
+ENDFOR
+dst[MAX:512] := 0
+	</operation>
+	<instruction form="zmm {k}, vm32z" name="VGATHERQPD" xed="VGATHERQPD_ZMMf64_MASKmskw_MEMf64_AVX512_VL512" />
+	<CPUID>AVX512F</CPUID>
+	<header>immintrin.h</header>
+	<category>Load</category>
+	</intrinsic>
+	<intrinsic name="_mm512_reduce_add_pd" sequence="TRUE" tech="AVX-512">
+	<return etype="FP64" type="double" varname="dst" />
+	<parameter etype="FP64" type="__m512d" varname="a" />
+	<description>Reduce the packed double-precision (64-bit) floating-point elements in "a" by addition. Returns the sum of all elements in "a".</description>
+	<operation>
+DEFINE REDUCE_ADD(src, len) {
+	IF len == 2
+		RETURN src[63:0] + src[127:64]
+	FI
+	len := len / 2
+	FOR j:= 0 to (len-1)
+		i := j*64
+		src[i+63:i] := src[i+63:i] + src[i+64*len+63:i+64*len]
+	ENDFOR
+	RETURN REDUCE_ADD(src[64*len-1:0], len)
+}
+dst[63:0] := REDUCE_ADD(a, 8)
+	</operation>
+	<CPUID>AVX512F</CPUID>
+	<header>immintrin.h</header>
+	<category>Arithmetic</category>
+	</intrinsic>
+	<intrinsic name="_mm256_fmadd_pd" tech="AVX_ALL">
+	<return etype="FP64" type="__m256d" varname="dst" />
+	<parameter etype="FP64" type="__m256d" varname="a" />
+	<parameter etype="FP64" type="__m256d" varname="b" />
+	<parameter etype="FP64" type="__m256d" varname="c" />
+	<description>Multiply packed double-precision (64-bit) floating-point elements in "a" and "b", add the intermediate result to packed elements in "c", and store the results in "dst".</description>
+	<operation>
+FOR j := 0 to 3
+	i := j*64
+	dst[i+63:i] := (a[i+63:i] * b[i+63:i]) + c[i+63:i]
+ENDFOR
+dst[MAX:256] := 0
+	</operation>
+	<instruction form="ymm, ymm, ymm" name="VFMADD132PD" xed="VFMADD132PD_YMMqq_YMMqq_YMMqq" />
+	<instruction form="ymm, ymm, ymm" name="VFMADD213PD" xed="VFMADD213PD_YMMqq_YMMqq_YMMqq" />
+	<instruction form="ymm, ymm, ymm" name="VFMADD231PD" xed="VFMADD231PD_YMMqq_YMMqq_YMMqq" />
+	<CPUID>FMA</CPUID>
+	<header>immintrin.h</header>
+	<category>Arithmetic</category>
+	</intrinsic>
+	<intrinsic name="_mm_add_ps" tech="SSE_ALL" vexEq="TRUE">
+	<return etype="FP32" type="__m128" varname="dst" />
+	<parameter etype="FP32" type="__m128" varname="a" />
+	<parameter etype="FP32" type="__m128" varname="b" />
+	<description>Add packed single-precision (32-bit) floating-point elements in "a" and "b", and store the results in "dst".</description>
+	<operation>
+FOR j := 0 to 3
+	i := j*32
+	dst[i+31:i] := a[i+31:i] + b[i+31:i]
+ENDFOR
+	</operation>
+	<instruction form="xmm, xmm" name="ADDPS" xed="ADDPS_XMMps_XMMps" />
+	<CPUID>SSE</CPUID>
+	<header>xmmintrin.h</header>
+	<category>Arithmetic</category>
+	</intrinsic>
+	</intrinsics_list>
