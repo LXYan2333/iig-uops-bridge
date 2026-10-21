@@ -5,6 +5,7 @@ English | [Chinese](README_CN.md)
 A Tampermonkey userscript that brings uops.info measurements into the Intel Intrinsics Guide. Choose multiple microarchitectures, inspect instruction variants, and open the corresponding uops.info page directly from an intrinsic.
 
 <img alt="image" src="https://github.com/user-attachments/assets/06fb0c58-25cd-479b-8c20-4351bc1e486e" />
+<img width="3586" height="1971" alt="image" src="https://github.com/user-attachments/assets/05d28eeb-face-4f68-9111-a7b86419bca6" />
 
 ## Installation
 
