@@ -8,12 +8,12 @@
 
 ## 安装
 
-1. 安装适用于浏览器的 Tampermonkey：[Firefox](https://addons.mozilla.org/firefox/addon/tampermonkey/) 或 [Chrome / Chromium](https://www.tampermonkey.net/)。
+1. 安装适用于浏览器的 Tampermonkey：[Firefox](https://addons.mozilla.org/firefox/addon/tampermonkey/) 或 [Chrome / Chromium](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)。
 2. **Chrome / Chromium 用户**：打开 `chrome://extensions`，进入 **Tampermonkey → 详情**，开启 **允许运行用户脚本（Allow User Scripts）**。这是浏览器的扩展权限，与 Tampermonkey 仪表板中启用某个脚本是两回事。缺少运行用户脚本的权限时，即使安装成功，Guide 页面也可能没有任何效果。如果当前浏览器版本没有这个开关，请参照 [Tampermonkey 官方配置说明](https://www.tampermonkey.net/faq.php#Q209)。Firefox 用户可跳过此步骤。
-3. 打开 Tampermonkey 仪表板 → **实用工具 → 从文件导入**，选择本项目的 [`dist/iig-uops-bridge.user.js`](dist/iig-uops-bridge.user.js)，确认安装。也可以新建脚本，用此文件的**完整内容**替换编辑器中的模板并保存。
+3. 从[最新 Release](https://github.com/LXYan2333/iig-uops-bridge/releases/latest) 下载 **[iig-uops-bridge.user.js](https://github.com/LXYan2333/iig-uops-bridge/releases/latest/download/iig-uops-bridge.user.js)**，请选择 `.user.js` 附件，不要下载源码压缩包。如果 Tampermonkey 自动打开安装页，确认安装即可；否则打开其仪表板 → **实用工具 → 从文件导入**，选择刚下载的文件。
 4. 刷新 [Intel Intrinsics Guide](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html)，修改上述浏览器权限后也需要刷新页面。搜索框下面会出现 **uops.info 桥接**工具栏。
 
-安装使用的是已经构建好的单文件脚本，不需要 Node.js、Python 或本地服务。脚本没有配置远程自动更新地址；更新时重新导入新文件。
+安装使用的是已经构建好的单文件脚本，不需要 Node.js、Python 或本地服务。脚本没有配置远程自动更新地址；更新时从最新 Release 下载并重新导入脚本。
 
 ## 使用
 
@@ -100,16 +100,33 @@ npm test
 
 ## GitHub Actions
 
-推送到 GitHub 后，可使用两条工作流：
+提供三条工作流：
 
 - **Build and test**（`.github/workflows/build.yml`）：提交、PR 和手动触发时构建脚本，运行单元/DOM 测试及 Chromium、Firefox 浏览器测试。成功后上传可安装脚本，构建产物保留 30 天。
+- **Build and release**（`.github/workflows/release.yml`）：推送 `vX.Y.Z` tag 时触发，校验包版本、构建，并通过下载工具、单元/DOM、Chromium 和 Firefox 测试后发布 GitHub Release，包含 `iig-uops-bridge.user.js` 和 SHA-256 校验文件。使用提交中的索引，不临时下载源数据。中断的草稿发布可通过重跑工作流继续；已发布的 Release 保持不变。
 - **Update instruction index**（`.github/workflows/update-index.yml`）：每周一 **UTC 03:17（北京时间 11:17）**执行，也支持手动触发。下载官方资料、验证并生成索引。索引变化时递增补丁版本、重新构建和测试，并在 `automation/update-instruction-index` 分支创建或更新同一个 PR。没有变化就不创建新版本或新 PR；下载或测试失败会停止更新。原始下载资料保持忽略。
 
 启用前，将工作流放到仓库默认分支，在 **Settings → Actions → General → Workflow permissions** 中允许 GitHub Actions 创建 PR。更新任务申请仓库内容和 PR 的写权限，普通构建只使用读取权限；无需配置个人 token 或额外 secrets。参见 [create-pull-request 权限要求](https://github.com/peter-evans/create-pull-request#workflow-permissions)。
 
 首次可在 **Actions → Update instruction index → Run workflow** 手动运行。审核并合并生成的 PR 后，默认分支的索引与脚本才会更新。GitHub 可能要求审批由 `GITHUB_TOKEN` 创建的 PR 的 CI 运行；出现提示时点击 PR 中的 **Approve workflows to run**。更新工作流自身已经在创建 PR 前执行测试。参见 [GitHub 工作流触发规则](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow#triggering-a-workflow-from-a-workflow)。
 
-从成功运行的工作流下载 artifact，解压后将 `iig-uops-bridge.user.js` 导入 Tampermonkey。工作流不会自动合并 PR、发布 GitHub Release，或更新浏览器内已安装的脚本。上游网站不可用时，更新失败不会改变默认分支；恢复后可重新运行。定时任务只在默认分支运行，可能延迟或因仓库长期无活动而被停用；停止更新时请检查 Actions 页面。
+正式版本从 [Releases](https://github.com/LXYan2333/iig-uops-bridge/releases/latest) 安装；构建 artifact 可用于测试尚未发布的提交。索引更新不会自动合并 PR 或发布 Release；审核并合并后，推送版本 tag 即可发布。浏览器内已安装的脚本通过导入新版本更新。上游网站不可用时，更新失败不会改变默认分支；恢复后可重新运行。定时任务只在默认分支运行，可能延迟或因仓库长期无活动而被停用；停止更新时请检查 Actions 页面。
+
+## 发布版本
+
+先设置包版本、重新构建，并提交 `package.json`、`package-lock.json` 和 `dist/iig-uops-bridge.user.js`，再创建 tag。tag 必须是包版本加上 `v` 前缀，例如包版本 `1.0.1` 对应 `v1.0.1`。
+
+```bash
+npm version 1.0.1 --no-git-tag-version
+npm test
+git add package.json package-lock.json dist/iig-uops-bridge.user.js
+git commit -m "Prepare v1.0.1 release"
+git tag -a v1.0.1 -m "Release v1.0.1"
+git push origin main
+git push origin v1.0.1
+```
+
+发布任务使用内置 `GITHUB_TOKEN` 的 `contents: write` 权限，无需额外 secret。等待 **Build and release** 成功后再分享下载链接。后续发布使用新版本号，不要移动已有 tag。
 
 ## 来源
 

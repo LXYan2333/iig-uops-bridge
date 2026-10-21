@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Intel Guide → uops.info
 // @namespace    iig-uops-bridge
-// @version      1.3.0
+// @version      1.0.0
 // @description  View uops.info measurements for your selected microarchitectures in Intel Intrinsics Guide
 // @description:zh-CN 在 Intel Intrinsics Guide 中查看所选微架构的 uops.info 数据
 // @match        https://www.intel.com/content/www/*/docs/intrinsics-guide/*

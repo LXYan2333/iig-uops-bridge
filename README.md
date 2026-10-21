@@ -8,12 +8,12 @@ A Tampermonkey userscript that brings uops.info measurements into the Intel Intr
 
 ## Installation
 
-1. Install Tampermonkey for your browser: [Firefox](https://addons.mozilla.org/firefox/addon/tampermonkey/) or [Chrome / Chromium](https://www.tampermonkey.net/).
+1. Install Tampermonkey for your browser: [Firefox](https://addons.mozilla.org/firefox/addon/tampermonkey/) or [Chrome / Chromium](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo).
 2. **Chrome / Chromium:** open `chrome://extensions`, find **Tampermonkey → Details**, and enable **Allow User Scripts**. This is a browser extension permission, separate from enabling a script in the Tampermonkey dashboard. Without permission to run user scripts, installation can succeed while nothing appears on the Guide page. If the toggle is unavailable in your browser version, follow the [official Tampermonkey setup instructions](https://www.tampermonkey.net/faq.php#Q209). Firefox users can skip this step.
-3. Open the Tampermonkey dashboard, go to **Utilities → Import from file**, and select [`dist/iig-uops-bridge.user.js`](dist/iig-uops-bridge.user.js). Confirm the installation. Alternatively, create a new script, replace the entire editor template with this file's contents, and save.
+3. Download **[iig-uops-bridge.user.js](https://github.com/LXYan2333/iig-uops-bridge/releases/latest/download/iig-uops-bridge.user.js)** from the [latest release](https://github.com/LXYan2333/iig-uops-bridge/releases/latest). Choose the `.user.js` asset, not the source-code archive. If Tampermonkey opens an installation page, confirm installation. Otherwise, open its dashboard, go to **Utilities → Import from file**, and select the downloaded file.
 4. Reload the [Intel Intrinsics Guide](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html), including after changing the browser permission. A **uops.info bridge** toolbar will appear below the search box.
 
-The bundled script is ready to install: no Node.js, Python, or local server is needed. Remote automatic updates are not configured; import the new file when updating. The interface supports English and Simplified Chinese. It follows your preferred browser language on first use (English for other languages); an explicit selection is saved across visits.
+The bundled script is ready to install: no Node.js, Python, or local server is needed. Remote automatic updates are not configured; download and import the script from the latest release when updating. The interface supports English and Simplified Chinese. It follows your preferred browser language on first use (English for other languages); an explicit selection is saved across visits.
 
 ## Usage
 
@@ -109,16 +109,33 @@ Translation strings live in `src/i18n.ts`. Chinese source strings are the messag
 
 ## GitHub Actions
 
-After pushing this repository to GitHub, two workflows are available:
+Three workflows are available:
 
 - **Build and test** (`.github/workflows/build.yml`): runs on pushes, pull requests, and manual dispatch. Builds the userscript and runs unit/DOM tests plus Chromium and Firefox browser tests. Successful runs upload the installable script as an artifact retained for 30 days.
+- **Build and release** (`.github/workflows/release.yml`): runs when a `vX.Y.Z` tag is pushed. Validates the package version, builds, and runs downloader, unit/DOM, Chromium, and Firefox tests before publishing a GitHub Release with `iig-uops-bridge.user.js` and its SHA-256 checksum. Uses the committed index without downloading fresh source data. An interrupted draft can be resumed by rerunning the workflow; a published release is left unchanged.
 - **Update instruction index** (`.github/workflows/update-index.yml`): runs every Monday at **03:17 UTC** and can be started manually. Downloads official sources, validates and regenerates the index, and checks for changes. When the index changes, it increments the patch version, rebuilds, tests, and opens or refreshes one PR on `automation/update-instruction-index`. Unchanged data produces no new version or PR. Download or test failures stop the update. Raw downloads stay ignored.
 
 To enable updates, put the workflows on the repository's default branch and allow Actions to create pull requests under **Settings → Actions → General → Workflow permissions**. The update job requests repository-content and pull-request write permissions; the build job only reads repository contents. No personal token or extra secrets are needed. See the [create-pull-request permission requirements](https://github.com/peter-evans/create-pull-request#workflow-permissions).
 
 Use **Actions → Update instruction index → Run workflow** for the first run. Review and merge its PR to update the default branch. GitHub may require approval before running CI on a PR created by `GITHUB_TOKEN`; use **Approve workflows to run** on the PR when prompted. The update workflow already runs its own tests before creating the PR. See [GitHub's workflow-trigger rules](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow#triggering-a-workflow-from-a-workflow).
 
-Download the artifact from a successful workflow run, unzip it, and import `iig-uops-bridge.user.js` into Tampermonkey. Workflows do not automatically merge PRs, publish GitHub Releases, or update scripts already installed in browsers. Upstream site outages can fail an update without changing the default branch; retry the workflow after the source becomes available. GitHub schedules run on the default branch and may be delayed or disabled by repository inactivity; check the Actions tab if updates stop.
+Install published versions from [Releases](https://github.com/LXYan2333/iig-uops-bridge/releases/latest). Build artifacts are also available for testing unpublished commits. Index updates do not automatically merge PRs or publish releases; push a version tag after reviewing and merging an update. Installed scripts are updated by importing the new release file. Upstream site outages can fail an update without changing the default branch; retry the workflow after the source becomes available. GitHub schedules run on the default branch and may be delayed or disabled by repository inactivity; check the Actions tab if updates stop.
+
+## Publishing a release
+
+Set the package version, rebuild, and commit `package.json`, `package-lock.json`, and `dist/iig-uops-bridge.user.js` before tagging. The tag must exactly match the package version, prefixed with `v`; for example, package version `1.0.1` requires tag `v1.0.1`.
+
+```bash
+npm version 1.0.1 --no-git-tag-version
+npm test
+git add package.json package-lock.json dist/iig-uops-bridge.user.js
+git commit -m "Prepare v1.0.1 release"
+git tag -a v1.0.1 -m "Release v1.0.1"
+git push origin main
+git push origin v1.0.1
+```
+
+The release job uses the built-in `GITHUB_TOKEN` with `contents: write`; no additional secret is required. Wait for **Build and release** to succeed before sharing the download link. Use a new version for subsequent releases instead of moving an existing tag.
 
 ## Sources
 
