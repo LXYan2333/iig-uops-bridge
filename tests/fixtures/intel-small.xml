@@ -138,6 +138,24 @@ dst[63:0] := REDUCE_ADD(a, 8)
 	<header>immintrin.h</header>
 	<category>Arithmetic</category>
 	</intrinsic>
+	<intrinsic name="_mm512_shrdi_epi64" tech="AVX-512">
+	<return etype="UI64" type="__m512i" varname="dst" />
+	<parameter etype="UI64" type="__m512i" varname="a" />
+	<parameter etype="UI64" type="__m512i" varname="b" />
+	<parameter etype="IMM" immwidth="8" type="int" varname="imm8" />
+	<description>Concatenate packed 64-bit integers in "b" and "a" producing an intermediate 128-bit result. Shift the result right by "imm8" bits, and store the lower 64-bits in "dst".</description>
+	<operation>
+FOR j := 0 to 7
+	i := j*64
+	dst[i+63:i] := ((b[i+63:i] &lt;&lt; 64)[127:0] | a[i+63:i]) &gt;&gt; imm8[5:0]
+ENDFOR
+dst[MAX:512] := 0
+	</operation>
+	<instruction form="zmm, zmm, zmm, imm8" name="VPSHRDQ" xed="VPSHRDQ_ZMMu64_MASKmskw_ZMMu64_ZMMu64_IMM8_AVX512" />
+	<CPUID>AVX512_VBMI2</CPUID>
+	<header>immintrin.h</header>
+	<category>Shift</category>
+	</intrinsic>
 	<intrinsic name="_mm256_fmadd_pd" tech="AVX_ALL">
 	<return etype="FP64" type="__m256d" varname="dst" />
 	<parameter etype="FP64" type="__m256d" varname="a" />

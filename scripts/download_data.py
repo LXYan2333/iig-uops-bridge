@@ -84,11 +84,19 @@ def main():
         manifest = fetch_intel(stage)
         for name, url in {
             'uops-instructions.xml': 'https://uops.info/instructions.xml',
+            'uops-instructions.csv': 'https://uops.info/csv/instructions.csv',
             'uops-table.html': 'https://uops.info/table.html',
         }.items():
             manifest[name] = fetch(url, stage / name)
         for _, e in ET.iterparse(stage / 'uops-instructions.xml'):
             e.clear()
+        # Validate the additional source before replacing any previous downloads.
+        try:
+            from .build_data import table_catalog
+        except ImportError:
+            from build_data import table_catalog
+        if len(table_catalog((stage / 'uops-instructions.csv').read_text())) < 20000:
+            raise ValueError('Incomplete uops.info instruction catalog; previous data retained')
         for name in manifest:
             (stage / name).replace(dest / name)
         (dest / 'update-manifest.json').write_text(json.dumps(manifest, indent=2))

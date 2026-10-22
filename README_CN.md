@@ -43,6 +43,7 @@
 | `_mm512_cvtepi64_pd` | `VCVTQQ2PD (ZMM, ZMM)`；使用已核验的 XED 类型字段别名。`M512`、`M64_1to8` 等形式在其他变体中。 |
 | `_mm512_maskz_cvtepi64_pd` | `VCVTQQ2PD_Z (ZMM, K, ZMM)`，与普通或合并掩码形式分开。 |
 | `_mm512_i64gather_pd` | `VGATHERQPD (ZMM, K, VSIB_ZMM)`；说明 Guide 的 `vm32z` 写法与其 XED/64 位索引信息的差异。 |
+| `_mm512_shrdi_epi64` | `VPSHRDQ (ZMM, ZMM, ZMM, I8)`；XML 缺少详情 URL 时，通过官方表格目录补全。 |
 | AVX2 masked gather | 向量掩码寄存器属于普通操作数，不误当成 EVEX 的 K 掩码。 |
 | 多种 FMA 映射 | 分组列出可能指令，具体选择由编译器和上下文决定。 |
 | reduce、SVML 等 sequence | 明确提示指令序列；不把单条数据当作整体成本，不直接相加。 |
@@ -51,7 +52,7 @@
 
 ## 数据、缓存与权限
 
-- 内置索引的 Intel Guide 版本、uops.info 日期和来源哈希记录在 `src/generated/index.json` 中，也可在“设置 / 数据”查看版本。仅收录官方 XML 明确提供详情 URL 的指令变体。
+- 内置索引的 Intel Guide 版本、uops.info 日期和来源哈希记录在 `src/generated/index.json` 中，也可在“设置 / 数据”查看版本。详情链接优先取自官方 XML；缺少 URL 时，按完整指令名称和扩展类型精确匹配 uops.info 官方表格目录（`csv/instructions.csv`），使用官网表格相同的链接生成规则。XED、操作数、编码和掩码标记仍取自 XML。读取页面后还会校验完整指令名称和 XED 标识，通过后才显示测量数据。
 - 浏览器按需读取 uops.info 指令详情页，只提取 **Measurements**。不混入 IACA 或 Documentation，不执行远程页面脚本，也不下载约 143 MB 的完整 XML。
 - 请求按指令去重，最多同时 3 个。按变体缓存整页各架构数据，有效期 7 天；刷新失败可显示明确标注的旧缓存。
 - 权限仅用于 Intel Guide 页面注入、uops.info 跨站请求、脚本设置与缓存。跨站请求不携带登录凭据，没有自建后端或遥测。
@@ -92,7 +93,7 @@ npm test
 
 下载工具从 Intel 当前页面及渲染脚本发现数据地址。主站不可用时，依次尝试 `www.intel.com`、`www.intel.cn` 的 Intel 官方静态渲染脚本，再从脚本中读取 XML 地址。临时网络或服务器故障会有限重试；HTTP 403 直接尝试下一个来源。全部来源失败时终止更新，保留原有数据。保留稳定的本地文件名，但从 XML 内容读取真实版本。也可使用已有下载资料运行 `npm run data:build`。原始数据只保存在已忽略的 `research/` 中。分发更新时应修改 `package.json` 的版本并重新构建。
 
-下载工具回归测试：`python3 -m unittest discover -s tests -p '*_test.py'`（Python 3.9+），模拟来源拒绝访问、后备来源、临时故障及保留原有下载资料。
+数据工具回归测试：`python3 -m unittest discover -s tests -p '*_test.py'`（Python 3.9+），覆盖来源拒绝访问、后备来源、临时故障、保留原有下载资料，以及通过官方目录补全缺失详情 URL。重新生成索引现在需要 `research/uops-instructions.csv`；旧资料目录请运行 `npm run data:update` 更新。
 
 模块分工：`src/match.ts` 负责匹配，`src/parser.ts` / `src/service.ts` 负责读取与缓存，`src/guide.ts` 适配 Guide，`src/main.ts` / `src/ui.ts` 管理三种视图。索引生成工具在 `scripts/`。
 

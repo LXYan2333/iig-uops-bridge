@@ -25,7 +25,7 @@ for (const i of intrinsics) byName.set(i.name, [...(byName.get(i.name) ?? []), i
 for (const v of variants) byMnemonic.set(v.mnemonic, [...(byMnemonic.get(v.mnemonic) ?? []), v]);
 
 export function variantUrl(v: Pick<Variant, 'id'>, arch?: string): string {
-  // id is extracted from the official XML's validated URL, not inferred from Intel text.
+  // id comes from the official XML URL or a full-name/extension match in its table catalog.
   return `https://uops.info/html-instr/${encodeURIComponent(v.id)}.html${arch ? `#${encodeURIComponent(arch)}` : ''}`;
 }
 // The old single-architecture field is read only for migration; runtime settings use arrays.

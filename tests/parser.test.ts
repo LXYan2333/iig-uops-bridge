@@ -5,6 +5,15 @@ import { latencySummary, parsePerformance, safeUopsUrl } from '../src/parser';
 const fixture = (name: string) => readFileSync(`tests/fixtures/${name}`, 'utf8');
 const variant = (name: string) => variants.find(v => v.name === name)!;
 describe('official uops.info HTML', () => {
+  it('reads the recovered VPSHRDQ page and still verifies its identity', () => {
+    const v = variant('VPSHRDQ (ZMM, ZMM, ZMM, I8)');
+    const html = fixture('uops-shrdi.html');
+    const page = parsePerformance(html, v);
+    expect(page.measurements.TGL).toMatchObject({ loop: '1.00', unrolled: '1.00', uops: '1', ports: '1*p0' });
+    expect(page.measurements.TGL.latencies.map(d => d.value)).toEqual(['1', '1']);
+    expect(() => parsePerformance(html, { ...v, name: 'VPSHRDQ (ZMM, ZMM, M512, I8)' })).toThrow('身份');
+    expect(() => parsePerformance(html, { ...v, iform: 'wrong' })).toThrow('形式');
+  });
   it('reads TGL measurements and retains all source architecture records', () => {
     const page = parsePerformance(fixture('uops-convert.html'), variant('VCVTQQ2PD (ZMM, ZMM)'));
     expect(page.measurements.TGL).toMatchObject({ loop: '1.00', unrolled: '1.00', uops: '1', ports: '1*p0' });

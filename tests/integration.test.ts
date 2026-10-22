@@ -43,7 +43,7 @@ async function boot(mode = 'inline', language: string | undefined = 'zh-CN') {
   w.dispatchEvent(new w.Event('load'));
   w.eval(readFileSync('dist/iig-uops-bridge.user.js', 'utf8'));
   await vi.waitFor(() => expect(w.document.querySelector('[data-iig-uops="toolbar"]')).not.toBeNull());
-  await vi.waitFor(() => expect(w.document.querySelectorAll('[data-iig-uops="card"]').length).toBe(9));
+  await vi.waitFor(() => expect(w.document.querySelectorAll('[data-iig-uops="card"]').length).toBe(10));
   const bar = w.document.querySelector('[data-iig-uops="toolbar"]').shadowRoot;
   const getCard = (name: string): any => [...w.document.querySelectorAll('.intrinsic')].find((e: any) => e.querySelector('.signature .name').textContent === name);
   const change = (select: any, value: string) => { select.value = value; select.dispatchEvent(new w.Event('change')); };
@@ -138,7 +138,7 @@ describe('complete bundle with the actual Intel renderer', () => {
     expect(root.textContent).toContain('vm32z 与其 XED');
     expect(root.querySelector('.details-table')?.textContent).toContain('≤13');
     w.renderPass();
-    await vi.waitFor(() => expect(w.document.querySelectorAll('[data-iig-uops="card"]').length).toBe(9));
+    await vi.waitFor(() => expect(w.document.querySelectorAll('[data-iig-uops="card"]').length).toBe(10));
     const again = open('_mm512_i64gather_pd');
     await vi.waitFor(() => expect(again.querySelector('.metric-table')?.textContent).toContain('5.00'));
     expect(calls).toHaveLength(1);

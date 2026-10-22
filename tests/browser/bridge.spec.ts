@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 const base = 'https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html';
 const fixtures = resolve('tests/fixtures');
 const files: Record<string, string> = {
+  VPSHRDQ_ZMM_ZMM_ZMM_I8: 'uops-shrdi.html',
   VCVTQQ2PD_ZMM_ZMM: 'uops-convert.html', VCVTQQ2PD_Z_ZMM_K_ZMM: 'uops-convert-maskz.html',
   VCVTQQ2PD_ZMM_M64_1to8: 'uops-convert-broadcast.html', VGATHERQPD_ZMM_K_VSIB_ZMM: 'uops-gather.html',
 };
@@ -47,12 +48,22 @@ async function setup(page: Page, mode = 'inline', language = 'zh-CN') {
     await route.fulfill({ status: name ? 200 : 404, contentType: 'text/html', headers: { 'Access-Control-Allow-Origin': '*' }, body: name ? readFileSync(resolve(fixtures, name)) : 'No fixture' });
   });
   await page.goto(base);
-  await expect(page.locator('.intrinsic')).toHaveCount(9);
+  await expect(page.locator('.intrinsic')).toHaveCount(10);
   await page.addScriptTag({ path: 'dist/iig-uops-bridge.user.js' });
   await expect(page.locator('.architecture-picker summary')).toBeVisible();
   return calls;
 }
 const card = (page: Page, name: string) => page.locator('.intrinsic').filter({ has: page.locator('.signature .name').filter({ hasText: new RegExp(`^${name}$`) }) });
+
+test('finds VPSHRDQ despite a missing XML URL and displays its Tiger Lake measurements', async ({ page }) => {
+  const calls = await setup(page);
+  const c = card(page, '_mm512_shrdi_epi64');
+  await c.locator('.signature').click();
+  await expect(c.locator('.metric-table')).toContainText('1*p0');
+  await expect(c.locator('.metric-table').getByRole('link', { name: 'Tiger Lake', exact: true }))
+    .toHaveAttribute('href', 'https://uops.info/html-instr/VPSHRDQ_ZMM_ZMM_ZMM_I8.html#TGL');
+  expect(calls).toEqual(['VPSHRDQ_ZMM_ZMM_ZMM_I8']);
+});
 
 test('inline is lazy, displays correct TGL data, changes variants and persists settings', async ({ page }) => {
   const calls = await setup(page);
@@ -109,7 +120,7 @@ test('gather uses its real VSIB page; filtering/re-rendering never duplicates pa
   await page.locator('#ig_search').fill('_mm512_cvtepi64_pd'); await page.locator('#ig_search').press('Enter');
   await expect(card(page, '_mm512_cvtepi64_pd')).toBeVisible();
   await page.locator('#ig_search').fill(''); await page.locator('#ig_search').press('Enter');
-  await expect(page.locator('.intrinsic')).toHaveCount(9);
+  await expect(page.locator('.intrinsic')).toHaveCount(10);
   for (const c of await page.locator('.intrinsic').all()) await expect(c.locator('[data-iig-uops="card"]')).toHaveCount(1);
 });
 

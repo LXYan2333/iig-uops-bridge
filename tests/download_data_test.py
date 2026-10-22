@@ -78,6 +78,22 @@ class DownloadTests(unittest.TestCase):
         sleep.assert_called_once_with(1)
         self.assertEqual((self.stage / 'data').read_bytes(), b'ok')
 
+    def test_invalid_table_catalog_preserves_previous_downloads(self):
+        research = self.stage / 'research'
+        research.mkdir()
+        previous = research / 'uops-instructions.csv'
+        previous.write_text('previous catalog')
+        with patch.object(downloader, 'ROOT', self.stage), patch.object(downloader, 'fetch_intel', return_value={}):
+            with self.serve({
+                'https://uops.info/instructions.xml': b'<root/>',
+                'https://uops.info/csv/instructions.csv': b'<html>Access denied</html>',
+                'https://uops.info/table.html': b'<html/>',
+            }):
+                with self.assertRaisesRegex(ValueError, 'catalog row'):
+                    downloader.main()
+        self.assertEqual(previous.read_text(), 'previous catalog')
+        self.assertEqual(list(research.iterdir()), [previous])
+
     def test_does_not_retry_forbidden_response(self):
         with self.serve({}) as opener, patch.object(downloader.time, 'sleep') as sleep:
             with self.assertRaises(HTTPError):

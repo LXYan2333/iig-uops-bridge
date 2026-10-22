@@ -43,6 +43,7 @@ Examples covered by the matcher:
 | `_mm512_cvtepi64_pd` | `VCVTQQ2PD (ZMM, ZMM)`, using a verified alias for the XED type fields. Forms such as `M512` and `M64_1to8` are available under other variants. |
 | `_mm512_maskz_cvtepi64_pd` | `VCVTQQ2PD_Z (ZMM, K, ZMM)`, distinct from unmasked and merging-mask forms. |
 | `_mm512_i64gather_pd` | `VGATHERQPD (ZMM, K, VSIB_ZMM)`, with a notice explaining the discrepancy between the Guide's `vm32z` text and its XED / 64-bit index information. |
+| `_mm512_shrdi_epi64` | `VPSHRDQ (ZMM, ZMM, ZMM, I8)`, using the official table catalog when the XML omits its detail URL. |
 | AVX2 masked gather | Treat the vector mask register as a regular operand, not an EVEX K mask. |
 | Multiple FMA mappings | Group the possible instructions; the compiler and surrounding code determine the actual choice. |
 | Instruction sequences such as reduce or SVML | Clearly identify sequences. Do not treat a single instruction's measurements as the total cost or simply add individual costs together. |
@@ -51,7 +52,7 @@ A match describes the instruction form listed by the Guide, not a guarantee of w
 
 ## Data, caching, and permissions
 
-- The bundled index records its Intel Guide version, uops.info date, and source hashes in `src/generated/index.json`. View the versions under **Settings / data**. Only instruction variants with explicit detail-page URLs in the official XML are included.
+- The bundled index records its Intel Guide version, uops.info date, and source hashes in `src/generated/index.json`. View the versions under **Settings / data**. Detail links come from the official XML or, when its URL is missing, an exact instruction-name and extension match in uops.info's official table catalog (`csv/instructions.csv`), using the table's own link-generation rule. XED, operands, encoding, and mask flags still come from the XML. Fetched pages must match the full instruction name and XED identifier before measurements are displayed.
 - The browser fetches instruction detail pages on demand and extracts only **Measurements**. It excludes IACA and Documentation, does not execute remote page scripts, and does not download the approximately 143 MB XML dataset.
 - Requests are deduplicated by instruction, with at most three in flight. Each variant's measurements across architectures are cached for seven days. Failed refreshes can fall back to clearly labeled stale data.
 - Permissions cover injection into the Intel Guide, cross-origin requests to uops.info, settings, and cache storage. Requests omit login credentials. There is no custom backend or telemetry.
@@ -92,7 +93,7 @@ npm test
 
 The downloader discovers the data URL from Intel's current page and renderer. If the main site is unavailable, it tries Intel's official static renderer on `www.intel.com`, then `www.intel.cn`, and reads the XML URL from that renderer. It retries temporary network/server failures; HTTP 403 switches to the next source without repeated retries. If all sources fail, the update fails and retains the previous data. It keeps a stable local filename while reading the actual version from the XML. To reuse downloaded materials, run `npm run data:build`. Raw downloads are stored in the ignored `research/` directory. Bump the version in `package.json` and rebuild before distributing an update.
 
-Run downloader regression tests with `python3 -m unittest discover -s tests -p '*_test.py'` (Python 3.9+). These tests simulate blocked sources, fallback, transient failures, and preservation of previous downloads.
+Run data-tool regression tests with `python3 -m unittest discover -s tests -p '*_test.py'` (Python 3.9+). These tests cover blocked sources, fallback, transient failures, preservation of previous downloads, and recovery of missing detail URLs from the official catalog. Index regeneration now requires `research/uops-instructions.csv`; run `npm run data:update` to refresh older research directories.
 
 Code layout:
 

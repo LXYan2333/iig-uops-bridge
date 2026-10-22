@@ -18,6 +18,15 @@ describe('semantic matching', () => {
     ['_mm256_zeroupper', 'VZEROUPPER'],
     ['_mm256_mask_i64gather_pd', 'VGATHERQPD (YMM, VSIB_YMM, YMM)'],
     ['_mm512_i64gather_epi64', 'VPGATHERQQ (ZMM, K, VSIB_ZMM)'],
+    ['_mm512_shrdi_epi64', 'VPSHRDQ (ZMM, ZMM, ZMM, I8)'],
+    ['_mm512_mask_shrdi_epi64', 'VPSHRDQ (ZMM, K, ZMM, ZMM, I8)'],
+    ['_mm512_maskz_shrdi_epi64', 'VPSHRDQ_Z (ZMM, K, ZMM, ZMM, I8)'],
+    ['_mm256_shrdi_epi64', 'VPSHRDQ (YMM, YMM, YMM, I8)'],
+    ['_mm256_mask_shrdi_epi64', 'VPSHRDQ (YMM, K, YMM, YMM, I8)'],
+    ['_mm256_maskz_shrdi_epi64', 'VPSHRDQ_Z (YMM, K, YMM, YMM, I8)'],
+    ['_mm_shrdi_epi64', 'VPSHRDQ (XMM, XMM, XMM, I8)'],
+    ['_mm_mask_shrdi_epi64', 'VPSHRDQ (XMM, K, XMM, XMM, I8)'],
+    ['_mm_maskz_shrdi_epi64', 'VPSHRDQ_Z (XMM, K, XMM, XMM, I8)'],
   ])('%s selects %s', (name, expected) => {
     const result = match(name);
     expect(result.confidence).toBe('confirmed');
@@ -27,6 +36,12 @@ describe('semantic matching', () => {
     const result = match('_mm512_cvtepi64_pd');
     expect(result.related.some(v => v.name === 'VCVTQQ2PD (ZMM, M64_1to8)')).toBe(true);
     expect(result.best.every(c => !c.variant.broadcast && !c.variant.operands.some(o => o.startsWith('M')))).toBe(true);
+    expect(result.related.every(v => !v.name.includes('XMM') && !v.name.includes('YMM'))).toBe(true);
+  });
+  it('links recovered shifts to the official page and keeps memory forms as alternatives', () => {
+    const result = match('_mm512_shrdi_epi64');
+    expect(variantUrl(result.best[0].variant, 'TGL')).toBe('https://uops.info/html-instr/VPSHRDQ_ZMM_ZMM_ZMM_I8.html#TGL');
+    expect(result.related.some(v => v.name === 'VPSHRDQ (ZMM, ZMM, M64_1to8, I8)')).toBe(true);
     expect(result.related.every(v => !v.name.includes('XMM') && !v.name.includes('YMM'))).toBe(true);
   });
   it('does not silently select rounding without an argument value', () => {
