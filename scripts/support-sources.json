@@ -1,0 +1,22 @@
+{
+  "xed": "0bcb6237345c5066726dcc08b3d87928df3b5b26",
+  "llvm": "de1772a114e32eddb487588effa10310f1347541",
+  "files": {
+    "xed.tar.gz": {
+      "url": "https://codeload.github.com/intelxed/xed/tar.gz/0bcb6237345c5066726dcc08b3d87928df3b5b26",
+      "sha256": "75a432bb687eef39c1a71e0b500c60adee1ad4da465e8cc97e4dbb8483e724e9"
+    },
+    "llvm.cpp": {
+      "url": "https://raw.githubusercontent.com/llvm/llvm-project/de1772a114e32eddb487588effa10310f1347541/llvm/lib/TargetParser/X86TargetParser.cpp",
+      "sha256": "ab8f3b700d24b0ed9659aef5a61de1571c49c8fb8740fce6858f7f2c7272eb2c"
+    },
+    "llvm.def": {
+      "url": "https://raw.githubusercontent.com/llvm/llvm-project/de1772a114e32eddb487588effa10310f1347541/llvm/include/llvm/TargetParser/X86TargetParser.def",
+      "sha256": "c9b06d8922fd24e72a50288aee5ff1b0653257f8257acb0d04af49f61ac9198d"
+    },
+    "llvm-license.txt": {
+      "url": "https://raw.githubusercontent.com/llvm/llvm-project/de1772a114e32eddb487588effa10310f1347541/llvm/LICENSE.TXT",
+      "sha256": "8d85c1057d742e597985c7d4e6320b015a9139385cff4cbae06ffc0ebe89afee"
+    }
+  }
+}

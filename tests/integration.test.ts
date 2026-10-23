@@ -60,7 +60,7 @@ describe('complete bundle with the actual Intel renderer', () => {
     const root = open('_mm512_cvtepi64_pd');
     await vi.waitFor(() => expect(root.querySelector('tr[data-arch="TGL"]')).not.toBeNull());
     bar.querySelector('.architecture-picker input[value="ADL-E"]').click();
-    await vi.waitFor(() => expect(root.querySelector('tr[data-arch="ADL-E"]')?.textContent).toContain('暂无测量数据'));
+    await vi.waitFor(() => expect(root.querySelector('tr[data-arch="ADL-E"]')?.textContent).toContain('不支持所需指令集'));
     root.querySelector('.reference-picker input[value="ICL"]').click();
     await vi.waitFor(() => expect(root.querySelector('tr[data-arch="ICL"]')).not.toBeNull());
     root.querySelector('.reference-picker input[value="SKX"]').click();
@@ -109,8 +109,8 @@ describe('complete bundle with the actual Intel renderer', () => {
     await vi.waitFor(() => expect(root.querySelector('.metric-table')?.textContent).toContain('1*p0+1*p23'));
     bar.querySelector('.architecture-picker input[value="ADL-E"]').click();
     bar.querySelector('.architecture-picker input[value="TGL"]').click();
-    await vi.waitFor(() => expect(root.textContent).toContain('暂无该变体的测量数据'));
-    expect(root.querySelector('.metric-table')?.textContent).toContain('暂无测量数据');
+    await vi.waitFor(() => expect(root.querySelector('.metric-table')?.textContent).toContain('不支持所需指令集'));
+    expect(root.querySelector('.metric-table')?.textContent).toContain('不支持所需指令集');
     expect(store.get('iig-uops:settings:1')).toMatchObject({ arches: ['ADL-E'] });
     w.eval(readFileSync('dist/iig-uops-bridge.user.js', 'utf8'));
     await new Promise(r => setTimeout(r, 30));

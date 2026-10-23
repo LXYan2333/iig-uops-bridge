@@ -3,6 +3,7 @@ import { archName, architectures, tableUrl, variantUrl, versions } from './data'
 import { matchInstruction } from './match';
 import { latencySummary } from './parser';
 import { PerformanceService } from './service';
+import { assessSupport, isaLabel, supportVersions, type SupportAssessment } from './support';
 import type { Intrinsic, MatchResult, PageResult, Settings, Variant } from './types';
 import css from './style.css';
 
@@ -26,6 +27,41 @@ export function makeHost(kind: string): { host: HTMLElement; root: ShadowRoot } 
 }
 
 const confidenceText = { confirmed: '已确认匹配', inferred: '推断匹配', ambiguous: '多个候选', none: '未确认匹配' } as const;
+const supportText = { supported: '架构模型支持', unsupported: '不支持所需指令集', conditional: '支持情况取决于具体型号', unknown: '支持情况未知' } as const;
+const missingText = { ...supportText, supported: '架构支持，暂无测量数据', unknown: '暂无测量数据，支持情况未知' } as const;
+const reasonText = {
+  unmapped: '尚未核验该架构与来源模型的对应关系。',
+  incomplete: '该 ISA 的资料或特性映射不完整，无法可靠判断。',
+  conflict: 'XED 与 LLVM 的模型结论不同，暂不判断是否支持。',
+  alderLakeAvx512: 'Alder Lake-P 的部分早期桌面型号未禁用 AVX-512；后续型号通常已禁用，不能由架构名称判断。',
+} as const;
+
+function supportNotice(support: SupportAssessment, missing: boolean) {
+  const details = el('details', undefined, 'support-details'); details.dataset.support = support.status;
+  details.append(el('summary', t((missing ? missingText : supportText)[support.status])));
+  details.append(el('p', `ISA: ${support.isa}`));
+  if (support.reason !== 'model') details.append(el('p', t(reasonText[support.reason])));
+  else if (support.status === 'unsupported') details.append(el('p', t('架构模型未包含该变体所需的 ISA。')));
+  if (support.requirements.length) {
+    details.append(el('p', t('CPUID 条件（满足任一组，组内全部满足）')));
+    const conditions = el('ul');
+    for (const group of support.requirements) {
+      const item = el('li'); item.append(el('code', group.join(' & '))); conditions.append(item);
+    }
+    details.append(conditions);
+  }
+  if (support.sources.length) {
+    details.append(el('p', t('来源与模型')));
+    const sources = el('ul');
+    for (const source of support.sources) {
+      const item = el('li'); item.append(link(source.name, source.url)); sources.append(item);
+    }
+    details.append(sources);
+  }
+  details.append(el('p', t('这是架构级资料，不是当前电脑的能力检测；具体型号、固件和操作系统配置仍可能影响可用性。'), 'muted'));
+  return details;
+}
+
 let nextVariantGroup = 0;
 
 class GroupView {
@@ -39,6 +75,7 @@ class GroupView {
   private requestVersion = 0;
   private alternativesOpen = false;
   private detailsOpen = new Set<string>();
+  private supportOpen = new Set<string>();
   private currentArches: string[];
   constructor(private match: MatchResult, arches: string[], private service: PerformanceService) {
     this.currentArches = [...arches];
@@ -48,6 +85,21 @@ class GroupView {
   setArches(arches: string[]) { this.currentArches = [...arches]; this.referenceArches = this.referenceArches.filter(a => !arches.includes(a)); this.render(); }
   setLanguage(match: MatchResult) { this.match = match; this.render(); }
   dispose() { this.requestVersion++; }
+  private supportNotice(support: SupportAssessment, arch: string, missing: boolean) {
+    const details = supportNotice(support, missing);
+    details.open = this.supportOpen.has(arch);
+    details.addEventListener('toggle', () => {
+      if (!details.isConnected) return;
+      if (details.open) this.supportOpen.add(arch); else this.supportOpen.delete(arch);
+    });
+    return details;
+  }
+  private supportCell(support: SupportAssessment, arch: string, missing: boolean) {
+    const cell = el('td');
+    cell.append(this.supportNotice(support, arch, missing));
+    if (support.status === 'unsupported') cell.append(el('small', t('所需指令集：{isa}', { isa: isaLabel(support.isa) }), 'muted'));
+    return cell;
+  }
   private render(force = false) {
     const version = ++this.requestVersion;
     const displayedArches = [...this.currentArches, ...this.referenceArches];
@@ -108,7 +160,9 @@ class GroupView {
     const sourceLinks = () => {
       const table = el('table', undefined, 'source-links');
       for (const arch of displayedArches) {
-        const row = el('tr'); const cell = el('td'); cell.append(link(archName(arch), variantUrl(v, arch))); row.append(cell); table.append(row);
+        const row = el('tr'); const cell = el('th'); cell.scope = 'row';
+        cell.append(link(archName(arch), variantUrl(v, arch)));
+        row.append(cell, this.supportCell(assessSupport(v, arch), arch, false)); table.append(row);
       }
       return table;
     };
@@ -136,6 +190,7 @@ class GroupView {
     const detailSections = el('div');
     for (const arch of displayedArches) {
       const m = page.measurements[arch];
+      const support = assessSupport(variant, arch);
       const reference = this.referenceArches.includes(arch);
       const row = el('tr'); row.dataset.arch = arch;
       const heading = el('th'); heading.scope = 'row';
@@ -143,8 +198,7 @@ class GroupView {
       if (reference) heading.append(el('small', t('参考架构'), 'reference-tag'));
       row.append(heading);
       if (!m) {
-        const cell = el('td', t('暂无测量数据')); cell.colSpan = 4; row.append(cell);
-        detailSections.append(el('p', t('{arch} 暂无该变体的测量数据。此状态不能用于判断处理器是否支持该指令。', { arch: archName(arch) }), 'notice'));
+        const cell = this.supportCell(support, arch, true); cell.colSpan = 4; row.append(cell);
       } else {
         const throughput = m.unrolled ? `${m.unrolled} (unrolled)` : m.loop ? `${m.loop} (loop)` : '—';
         for (const value of [latencySummary(m.latencies), throughput, m.uops || '—', m.ports || '—']) row.append(el('td', value));
@@ -159,7 +213,17 @@ class GroupView {
           th.append(d.url ? link(label, d.url) : document.createTextNode(label));
           detailRow.append(th, el('td', d.value)); dt.append(detailRow);
         }
-        details.append(dt); detailSections.append(details);
+        details.append(dt);
+        if (support.status === 'unsupported' || support.reason === 'conflict') {
+          // Actual measurements take precedence over static architecture models.
+          const warning = el('small', t('测试配置与架构资料存在差异；保留实测值。'), 'notice');
+          row.lastElementChild?.append(warning);
+          details.append(this.supportNotice(support, arch, false));
+        } else if (support.status === 'conditional') {
+          row.lastElementChild?.append(el('small', t('实测值来自 uops.info 的测试配置，不能保证所有同架构型号都支持。'), 'muted'));
+          details.append(this.supportNotice(support, arch, false));
+        }
+        detailSections.append(details);
       }
       tbody.append(row);
     }
@@ -270,6 +334,7 @@ export function toolbar(settings: Settings, change: (s: Settings) => void, servi
     hideNative.addEventListener('change', () => change({ ...settings, hideNativePerformance: hideNative.checked }));
     info.append(hideNativeLabel);
     info.append(el('small', t('Intel 索引 {intel} · uops.info 索引 {uops} · 缓存 7 天', { intel: versions.intel, uops: versions.uops })));
+    info.append(el('small', t('支持资料：XED {xed} · LLVM {llvm}', { xed: supportVersions.xed.slice(0, 8), llvm: supportVersions.llvm.slice(0, 8) })));
     const status = el('small'); status.setAttribute('role', 'status');
     info.append(button(t('清理性能缓存'), () => {
       void service.clear().then(() => { status.textContent = t('缓存已清理，下次查看将重新读取。'); }).catch(() => { status.textContent = t('清理失败，请重试。'); });

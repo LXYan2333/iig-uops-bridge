@@ -23,12 +23,29 @@
 - **其他变体 / 手动选择**：通过单选按钮列表选择寄存器、内存、广播、mask/maskz、舍入等形式。手动查看的相关变体会明确标记，不会替换成“已确认匹配”。
 - **测量细节**：展开操作数之间的依赖延迟、loop/unrolled 吞吐、端口估算、retire slots、MITE、MS 等原页指标。
 - **架构链接**：直接点击对比表中的架构名称，在新标签页打开对应指令与架构章节。表格搜索链接同时启用所有当前显示的架构、实测来源和指令集筛选。
-- **参考架构**：也支持多选，临时勾选的架构作为额外行显示，不改变已保存的选择。缺少测量数据的架构逐行标注；无测量数据不等于处理器不支持该指令。
+- **参考架构**：也支持多选，临时勾选的架构作为额外行显示，不改变已保存的选择。缺少测量数据时会单独判断指令集支持情况；已有参考测量始终保留。
 - **设置 / 数据**：可勾选隐藏 Intel Guide 自带的 **Latency and Throughput** 标题和性能表格，默认关闭，即时生效并保存偏好。取消勾选即可恢复，uops.info 数据保持显示。还可查看索引版本、清理性能缓存，每条结果也可以单独刷新。
 
 对比表每行显示一个架构，各架构的测量细节可分别展开。窄窗口下表格可横向滚动。多个架构共用同一次请求及页面缓存。
 
 吞吐的单位是 **cycles/instruction**，优先显示实测 unrolled，缺失时显示明确标注的 loop。端口计算的吞吐单独列在详情中。μops 摘要采用 Executed，retire slots 单独显示。延迟保留 `≤`、范围和原始附注；多条依赖的数值不会被合并成整个 intrinsic 的统一延迟。
+
+## 指令集支持状态
+
+当所选变体缺少某个架构的测量时，对应行会区分以下情况：
+
+| 提示 | 含义 |
+| --- | --- |
+| 不支持所需指令集 | 架构模型不包含所需 ISA，下方显示如 AVX-512 VBMI2 的特性名称。 |
+| 架构支持，暂无测量数据 | 模型包含该 ISA，但 uops.info 没有这个变体的实测值。 |
+| 支持情况取决于具体型号 | 存在有资料支持的例外，目前为 Alder Lake-P 的 AVX-512。 |
+| 暂无测量数据，支持情况未知 | 架构映射或 ISA 资料不完整，或来源结论不同。 |
+
+展开提示可查看精确 ISA、CPUID 条件、模型名称和资料链接。判断始终跟随**当前选择的变体**，包括手动选择。例如 `_mm512_shrdi_epi64` 需要 AVX-512 VBMI2：Haswell、Skylake、Zen 3 的模型不支持，Tiger Lake、Zen 4 的模型支持。
+
+支持信息来自固定版本的 Intel XED 和 LLVM，内置于脚本，不需要联网查询。这是**架构模型资料，不是当前电脑的能力检测**；具体型号、固件、操作系统或虚拟机配置仍可能影响可用性。部分早期 Alder Lake 桌面型号与后续型号不同，此例外不会套用到 E 核。没有可靠依据的架构别名保留未知，详见[映射和更新规则](scripts/SUPPORT_DATA.md)。
+
+已有实测值始终保留；与静态模型不同的测试配置会有提示。网络错误继续显示为错误，不会伪装成“暂无测量数据”。三种展示方式和两种界面语言采用相同判断。
 
 ## 匹配方式与边界
 
@@ -51,6 +68,8 @@
 匹配描述的是 Guide 所列的指令形式，不能保证编译器在具体上下文中一定选择它。无法确认时保留候选或搜索入口；不会通过删除 `V` 前缀或忽略不一致的寄存器宽度来强行匹配。
 
 ## 数据、缓存与权限
+
+支持数据保存在 `src/generated/support.json`，固定的上游提交和 SHA-256 保存在 `scripts/support-sources.json`。“设置 / 数据”会显示 XED 和 LLVM 版本。普通构建使用已提交的数据；`npm run data:update` 下载并验证来源后生成两份索引，`npm run data:build` 复用本地资料。两份数据均生成成功后才替换旧文件。自动更新 workflow 会检查两份数据；升级 XED/LLVM 来源版本需要显式修改并审核。
 
 - 内置索引的 Intel Guide 版本、uops.info 日期和来源哈希记录在 `src/generated/index.json` 中，也可在“设置 / 数据”查看版本。详情链接优先取自官方 XML；缺少 URL 时，按完整指令名称和扩展类型精确匹配 uops.info 官方表格目录（`csv/instructions.csv`），使用官网表格相同的链接生成规则。XED、操作数、编码和掩码标记仍取自 XML。读取页面后还会校验完整指令名称和 XED 标识，通过后才显示测量数据。
 - 浏览器按需读取 uops.info 指令详情页，只提取 **Measurements**。不混入 IACA 或 Documentation，不执行远程页面脚本，也不下载约 143 MB 的完整 XML。
@@ -105,7 +124,7 @@ npm test
 
 - **Build and test**（`.github/workflows/build.yml`）：提交、PR 和手动触发时构建脚本，运行单元/DOM 测试及 Chromium、Firefox 浏览器测试。成功后上传可安装脚本，构建产物保留 30 天。
 - **Build and release**（`.github/workflows/release.yml`）：推送 `vX.Y.Z` tag 时触发，校验包版本、构建，并通过下载工具、单元/DOM、Chromium 和 Firefox 测试后发布 GitHub Release，包含 `iig-uops-bridge.user.js` 和 SHA-256 校验文件。使用提交中的索引，不临时下载源数据。中断的草稿发布可通过重跑工作流继续；已发布的 Release 保持不变。
-- **Update instruction index**（`.github/workflows/update-index.yml`）：每周一 **UTC 03:17（北京时间 11:17）**执行，也支持手动触发。下载官方资料、验证并生成索引。索引变化时递增补丁版本、重新构建和测试，并在 `automation/update-instruction-index` 分支创建或更新同一个 PR。没有变化就不创建新版本或新 PR；下载或测试失败会停止更新。原始下载资料保持忽略。
+- **Update instruction index**（`.github/workflows/update-index.yml`）：每周一 **UTC 03:17（北京时间 11:17）**执行，也支持手动触发。下载官方资料、验证并生成匹配索引和支持数据；XED/LLVM 来源保持固定版本。任一数据变化时递增补丁版本、重新构建和测试，并在 `automation/update-instruction-index` 分支创建或更新同一个 PR。没有变化就不创建新版本或新 PR；下载或测试失败会停止更新。原始下载资料保持忽略。
 
 启用前，将工作流放到仓库默认分支，在 **Settings → Actions → General → Workflow permissions** 中允许 GitHub Actions 创建 PR。更新任务申请仓库内容和 PR 的写权限，普通构建只使用读取权限；无需配置个人 token 或额外 secrets。参见 [create-pull-request 权限要求](https://github.com/peter-evans/create-pull-request#workflow-permissions)。
 
@@ -115,16 +134,16 @@ npm test
 
 ## 发布版本
 
-先设置包版本、重新构建，并提交 `package.json`、`package-lock.json` 和 `dist/iig-uops-bridge.user.js`，再创建 tag。tag 必须是包版本加上 `v` 前缀，例如包版本 `1.0.1` 对应 `v1.0.1`。
+先设置包版本、重新构建，并提交 `package.json`、`package-lock.json` 和 `dist/iig-uops-bridge.user.js`，再创建 tag。tag 必须是包版本加上 `v` 前缀，例如包版本 `1.1.0` 对应 `v1.1.0`。
 
 ```bash
-npm version 1.0.1 --no-git-tag-version
+npm version 1.1.0 --no-git-tag-version
 npm test
 git add package.json package-lock.json dist/iig-uops-bridge.user.js
-git commit -m "Prepare v1.0.1 release"
-git tag -a v1.0.1 -m "Release v1.0.1"
+git commit -m "Prepare v1.1.0 release"
+git tag -a v1.1.0 -m "Release v1.1.0"
 git push origin main
-git push origin v1.0.1
+git push origin v1.1.0
 ```
 
 发布任务使用内置 `GITHUB_TOKEN` 的 `contents: write` 权限，无需额外 secret。等待 **Build and release** 成功后再分享下载链接。后续发布使用新版本号，不要移动已有 tag。
@@ -132,3 +151,5 @@ git push origin v1.0.1
 ## 来源
 
 [Intel Intrinsics Guide](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html)、[uops.info XML](https://uops.info/xml.html)、[uops.info 表格](https://uops.info/table.html)。生成索引保留输入文件的 SHA-256；测试快照的来源及 jQuery 原始许可说明见 `tests/fixtures/SOURCES.txt` 与对应文件。新增代码不把这些第三方数据或脚本重新声明为其他许可证。
+
+架构支持数据派生自 [Intel XED](https://github.com/intelxed/xed)（Apache-2.0）和 [LLVM](https://github.com/llvm/llvm-project)（Apache-2.0 with LLVM exceptions）。[第三方声明](third_party/NOTICE.txt)与许可证保留在 `third_party/`，并内嵌于可安装脚本。

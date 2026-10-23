@@ -1,0 +1,41 @@
+{
+  "architectures": {
+    "NHM": {"xed": "NEHALEM", "llvm": "nehalem"},
+    "WSM": {"xed": "WESTMERE", "llvm": "westmere"},
+    "SNB": {"xed": "SANDYBRIDGE", "llvm": "sandybridge"},
+    "IVB": {"xed": "IVYBRIDGE", "llvm": "ivybridge"},
+    "HSW": {"xed": "HASWELL", "llvm": "haswell"},
+    "BDW": {"xed": "BROADWELL", "llvm": "broadwell"},
+    "SKL": {"xed": "SKYLAKE", "llvm": "skylake"},
+    "SKX": {"xed": "SKYLAKE_SERVER", "llvm": "skylake-avx512"},
+    "CNL": {"xed": "CANNONLAKE", "llvm": "cannonlake"},
+    "CLX": {"xed": "CASCADE_LAKE", "llvm": "cascadelake"},
+    "ICL": {"xed": "ICE_LAKE", "llvm": "icelake-client"},
+    "TGL": {"xed": "TIGER_LAKE", "llvm": "tigerlake"},
+    "RKL": {"llvm": "rocketlake"},
+    "ADL-P": {"xed": "ALDER_LAKE", "llvm": "alderlake"},
+    "ADL-E": {"xed": "ALDER_LAKE", "llvm": "gracemont"},
+    "EMR": {"xed": "EMERALD_RAPIDS", "llvm": "emeraldrapids"},
+    "MTL-P": {"llvm": "meteorlake"},
+    "MTL-E": {"llvm": "meteorlake"},
+    "ARL-P": {"llvm": "arrowlake-s"},
+    "ARL-E": {"llvm": "arrowlake-s"},
+    "BNL": {"xed": "BONNELL", "llvm": "bonnell"},
+    "GLM": {"xed": "GOLDMONT", "llvm": "goldmont"},
+    "GLP": {"xed": "GOLDMONT_PLUS", "llvm": "goldmont-plus"},
+    "TRM": {"xed": "TREMONT", "llvm": "tremont"},
+    "ZEN+": {"llvm": "znver1"},
+    "ZEN2": {"llvm": "znver2"},
+    "ZEN3": {"llvm": "znver3"},
+    "ZEN4": {"llvm": "znver4"},
+    "ZEN5": {"llvm": "znver5"}
+  },
+  "exceptions": [
+    {
+      "arch": "ADL-P",
+      "isaPrefix": "AVX512",
+      "reason": "alderLakeAvx512",
+      "url": "https://www.intel.com/content/www/us/en/support/articles/000089918/processors.html"
+    }
+  ]
+}

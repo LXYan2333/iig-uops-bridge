@@ -87,8 +87,8 @@ test('inline is lazy, displays correct TGL data, changes variants and persists s
   await page.locator('.architecture-picker summary').click();
   await page.locator('.architecture-picker').getByRole('checkbox', { name: 'Alder Lake-E', exact: true }).check();
   await page.locator('.architecture-picker').getByRole('checkbox', { name: 'Tiger Lake', exact: true }).uncheck();
-  await expect(c.getByText(/暂无该变体的测量数据/)).toBeVisible();
-  await expect(c.locator('.metric-table')).toContainText('暂无测量数据');
+  await expect(c.getByText(/不支持所需指令集/)).toBeVisible();
+  await expect(c.locator('.metric-table')).toContainText('不支持所需指令集');
   await page.reload(); await page.addScriptTag({ path: 'dist/iig-uops-bridge.user.js' });
   await expect(page.locator('.architecture-picker input[value="ADL-E"]')).toBeChecked();
   await expect(page.locator('.architecture-picker input[value="TGL"]')).not.toBeChecked();
@@ -206,7 +206,7 @@ test('multiple architectures persist and architecture cells link directly to the
   for (const [id, name] of [['TGL', 'Tiger Lake'], ['ICL', 'Ice Lake'], ['ADL-E', 'Alder Lake-E']]) {
     await expect(c.locator(`tr[data-arch="${id}"]`).getByRole('link', { name, exact: true })).toHaveAttribute('href', `https://uops.info/html-instr/VCVTQQ2PD_ZMM_ZMM.html#${id}`);
   }
-  await expect(c.locator('tr[data-arch="ADL-E"]')).toContainText('No measurements');
+  await expect(c.locator('tr[data-arch="ADL-E"]')).toContainText('Required instruction set not supported');
   expect(calls).toHaveLength(1);
   await page.getByLabel('Display mode', { exact: true }).selectOption('sidebar');
   await expect(page.locator('[data-iig-uops="sidebar"] .metric-table tbody tr')).toHaveCount(3);
@@ -219,4 +219,50 @@ test('multiple architectures persist and architecture cells link directly to the
   for (const name of ['Tiger Lake', 'Ice Lake', 'Alder Lake-E']) await picker.getByRole('checkbox', { name, exact: true }).uncheck();
   await expect(c.getByText('Select at least one architecture to view measurements.', { exact: true })).toBeVisible();
   await expect(c.locator('.metric-table')).toHaveCount(0);
+});
+
+for (const mode of ['inline', 'click', 'sidebar']) {
+  test(`ISA support messages survive language changes in ${mode} mode`, async ({ page }) => {
+    const calls = await setup(page, mode, 'en');
+    // Keep authentic instruction identity and other measurements, omit TGL/ADL-P
+    // to exercise missing measurements independently from architecture support.
+    await page.route('https://uops.info/html-instr/VPSHRDQ_ZMM_ZMM_ZMM_I8.html', route => {
+      calls.push('VPSHRDQ_ZMM_ZMM_ZMM_I8');
+      const body = readFileSync(resolve(fixtures, 'uops-shrdi.html'), 'utf8')
+        .replace(/<h2 id="(?:TGL|ADL-P)">[\s\S]*?(?=<h2 id="|<\/body>)/g, '');
+      return route.fulfill({ contentType: 'text/html', headers: { 'Access-Control-Allow-Origin': '*' }, body });
+    });
+    const picker = page.locator('.architecture-picker');
+    await picker.locator('summary').click();
+    for (const id of ['HSW', 'ADL-P', 'KBL']) await picker.locator(`input[value="${id}"]`).check();
+    await picker.locator('summary').click();
+    const c = card(page, '_mm512_shrdi_epi64'); await c.locator('.signature').click();
+    if (mode === 'click') await c.getByRole('button', { name: 'View uops.info', exact: true }).click();
+    const view = mode === 'sidebar' ? page.locator('[data-iig-uops="sidebar"]') : c;
+    await expect(view.locator('.metric-table')).toBeVisible();
+    for (const [id, status] of [['HSW', 'Required instruction set not supported'], ['TGL', 'Architecture supports it; no measurements'], ['ADL-P', 'Support depends on the specific model'], ['KBL', 'No measurements; instruction support unknown']]) {
+      await expect(view.locator(`tr[data-arch="${id}"] summary`)).toHaveText(status);
+    }
+    await view.locator('tr[data-arch="HSW"] summary').click();
+    await expect(view.locator('tr[data-arch="HSW"] .support-details').getByRole('link', { name: /Intel XED/ })).toBeVisible();
+    await expect(view.locator('tr[data-arch="HSW"] small')).toHaveText('Required instruction set: AVX-512 VBMI2');
+    await page.getByLabel('Language', { exact: true }).selectOption('zh-CN');
+    await expect(view.locator('tr[data-arch="TGL"] summary')).toHaveText('架构支持，暂无测量数据');
+    await expect(view.locator('tr[data-arch="ADL-P"] summary')).toHaveText('支持情况取决于具体型号');
+    expect(calls).toEqual(['VPSHRDQ_ZMM_ZMM_ZMM_I8']);
+    if (mode === 'inline') {
+      await page.screenshot({ path: 'test-results/support-statuses.png', fullPage: true });
+    }
+  });
+}
+
+test('a failed request preserves static support information and a retry control', async ({ page }) => {
+  await setup(page, 'inline', 'en');
+  await page.route('https://uops.info/html-instr/VPSHRDQ_ZMM_ZMM_ZMM_I8.html', route => route.abort());
+  const c = card(page, '_mm512_shrdi_epi64'); await c.locator('.signature').click();
+  await expect(c.locator('.error')).toContainText('Could not connect');
+  await expect(c.locator('.support-details summary')).toHaveText('Supported by the architecture model');
+  await expect(c.getByRole('button', { name: 'Retry', exact: true })).toBeVisible();
+  await expect(c.locator('.metric-table')).toHaveCount(0);
+  await expect(c).not.toContainText('no measurements');
 });

@@ -69,6 +69,7 @@ def operand(o):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--source', type=Path, default=ROOT / 'research')
+    ap.add_argument('--output', type=Path, default=ROOT / 'src/generated/index.json')
     args = ap.parse_args()
     source = args.source
     intel_path = source / 'intel-data-3-6-9.xml'
@@ -120,10 +121,10 @@ def main():
     data = {'version': 1, 'intelVersion': intel.get('version'), 'uopsDate': date,
             'sources': {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in [intel_path, uops_path, catalog_path]},
             'architectures': archs, 'intrinsics': intrinsics, 'variants': variants}
-    out = ROOT / 'src/generated/index.json'
+    out = args.output
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(data, separators=(',', ':'), ensure_ascii=False) + '\n')
-    print(f'{out.relative_to(ROOT)}: {len(intrinsics)} intrinsics, {len(variants)} variants, {out.stat().st_size:,} bytes')
+    print(f'{out}: {len(intrinsics)} intrinsics, {len(variants)} variants, {out.stat().st_size:,} bytes')
     print(f'Recovered {recovered} detail links from the official uops.info table catalog')
 
 

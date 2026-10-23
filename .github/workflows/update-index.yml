@@ -40,7 +40,7 @@ jobs:
         id: index
         shell: bash
         run: |
-          if git diff --quiet -- src/generated/index.json; then
+          if git diff --quiet -- src/generated/index.json src/generated/support.json; then
             echo 'changed=false' >> "$GITHUB_OUTPUT"
             echo 'The instruction index is already current.' >> "$GITHUB_STEP_SUMMARY"
           else
@@ -80,13 +80,15 @@ jobs:
           delete-branch: true
           add-paths: |
             src/generated/index.json
+            src/generated/support.json
             dist/iig-uops-bridge.user.js
             package.json
             package-lock.json
           commit-message: Update instruction index and rebuild userscript
           title: Update instruction index and rebuild userscript
           body: |
-            Refresh the bundled Intel Intrinsics Guide and uops.info matching index from official sources.
+            Refresh the Intel/uops.info matching index and architecture support data from official sources.
+            XED and LLVM revisions and checksums remain pinned in scripts/support-sources.json.
 
             This update increments the package patch version and rebuilds the installable userscript.
             Downloaded source files remain in the ignored research directory.

@@ -1,11 +1,11 @@
 {
   "name": "iig-uops-bridge",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "data:build": "python3 scripts/build_data.py",
-    "data:update": "python3 scripts/download_data.py && npm run data:build",
+    "data:build": "python3 scripts/update_data.py",
+    "data:update": "python3 scripts/update_data.py --download",
     "build": "tsc --noEmit && node scripts/build.mjs",
     "test": "npm run build && vitest run",
     "test:browser": "npm run build && playwright test",

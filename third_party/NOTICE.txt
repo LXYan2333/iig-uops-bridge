@@ -1,0 +1,21 @@
+Architecture support data in src/generated/support.json is derived and modified from:
+
+Intel XED (Apache-2.0):
+https://github.com/intelxed/xed
+Copyright (c) 2019 Intel Corporation
+Copyright (c) 2020 Intel Corporation
+Copyright (c) 2021 Intel Corporation
+Copyright (c) 2022 Intel Corporation
+Copyright (c) 2023 Intel Corporation
+Copyright (c) 2024 Intel Corporation
+Copyright (c) 2025 Intel Corporation
+Copyright (c) 2026 Intel Corporation
+
+LLVM Project (Apache-2.0 WITH LLVM-exception):
+https://github.com/llvm/llvm-project
+Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+See LLVM-LICENSE.txt for license information.
+
+The pinned revisions and source hashes are recorded in scripts/support-sources.json.
+The bridge extracts model memberships and evaluates ISA requirements; these
+derived results and conservative policy rules are not upstream endorsements.

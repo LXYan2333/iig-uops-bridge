@@ -23,12 +23,29 @@ The bundled script is ready to install: no Node.js, Python, or local server is n
 - **Other variants / manual selection:** choose register, memory, broadcast, mask/maskz, and rounding forms from a radio-button list. Manually selected related variants are clearly labeled rather than presented as confirmed matches.
 - **Measurement details:** expand operand dependency latencies, loop and unrolled throughput, port estimates, retire slots, MITE, MS, and other metrics from the source page.
 - **Architecture links:** click an architecture name in the comparison table to open the instruction page at that architecture's section. The table search link enables all displayed architectures, measured data, and instruction-set filters.
-- **Reference architectures:** optionally check additional architectures to append temporary reference rows without changing the saved selection. Missing measurements remain explicit in each row and do not imply that a processor lacks instruction support.
+- **Reference architectures:** optionally check additional architectures to append temporary reference rows without changing the saved selection. Rows distinguish missing measurements from instruction-set support; measured reference data is always preserved.
 - **Settings / data:** optionally hide Intel Guide's built-in **Latency and Throughput** heading and performance table. This is off by default, takes effect immediately, and is saved across visits; uncheck it to restore the original section. The uops.info results remain visible. You can also inspect index versions and clear the performance cache. Individual results have a refresh control.
 
 The comparison table shows one architecture per row; measurement details expand separately for each architecture. On narrow screens the table scrolls horizontally. All architectures share the same fetched page and cache.
 
 Throughput is shown in **cycles/instruction**, using measured unrolled throughput when available and explicitly labeled loop throughput otherwise. Throughput calculated from port usage appears separately in the details. The μops summary uses executed μops; retire slots are listed separately. Latencies preserve bounds such as `≤`, ranges, and source annotations. Different dependency latencies are not collapsed into a single latency for the entire intrinsic.
+
+## Instruction-set support
+
+When a selected variant has no measurements for an architecture, its row shows:
+
+| Status | Meaning |
+| --- | --- |
+| Required instruction set not supported | The architecture model lacks the required ISA. The required feature, such as AVX-512 VBMI2, is shown below. |
+| Architecture supports it; no measurements | The model includes the ISA, but uops.info has no measurements for this variant. |
+| Support depends on the specific model | A documented exception applies, currently Alder Lake-P AVX-512. |
+| No measurements; instruction support unknown | The model mapping or ISA information is incomplete, or the sources disagree. |
+
+Expand a status for the exact ISA, CPUID conditions, model names, and source links. Assessment follows the **selected variant**, including manual selections. For example, `_mm512_shrdi_epi64` requires AVX-512 VBMI2: Haswell, Skylake and Zen 3 lack it, while the Tiger Lake and Zen 4 models include it.
+
+Support information is bundled from pinned Intel XED and LLVM sources and works without a network request. It describes architecture models, **not the capabilities of your current computer**. Specific CPU models, firmware, OS settings and virtualization can affect availability. Some early Alder Lake desktop models differ from later models; this exception does not extend to E cores. Unverified architecture aliases remain unknown; see the [mapping and update policy](scripts/SUPPORT_DATA.md).
+
+Measured values always take precedence and remain visible, with a note when the test configuration differs from the model. Network errors remain explicit and are never reported as missing measurements. All three display modes and both languages use the same support assessment.
 
 ## Matching and limitations
 
@@ -53,6 +70,7 @@ A match describes the instruction form listed by the Guide, not a guarantee of w
 ## Data, caching, and permissions
 
 - The bundled index records its Intel Guide version, uops.info date, and source hashes in `src/generated/index.json`. View the versions under **Settings / data**. Detail links come from the official XML or, when its URL is missing, an exact instruction-name and extension match in uops.info's official table catalog (`csv/instructions.csv`), using the table's own link-generation rule. XED, operands, encoding, and mask flags still come from the XML. Fetched pages must match the full instruction name and XED identifier before measurements are displayed.
+- Architecture support lives in `src/generated/support.json`; pinned source revisions and hashes are in `scripts/support-sources.json`. **Settings / data** shows the XED and LLVM revisions. Source upgrades require explicit review. The browser makes no additional requests for support checks.
 - The browser fetches instruction detail pages on demand and extracts only **Measurements**. It excludes IACA and Documentation, does not execute remote page scripts, and does not download the approximately 143 MB XML dataset.
 - Requests are deduplicated by instruction, with at most three in flight. Each variant's measurements across architectures are cached for seven days. Failed refreshes can fall back to clearly labeled stale data.
 - Permissions cover injection into the Intel Guide, cross-origin requests to uops.info, settings, and cache storage. Requests omit login credentials. There is no custom backend or telemetry.
@@ -70,7 +88,7 @@ npm run build
 npm test
 ```
 
-The output is `dist/iig-uops-bridge.user.js`. The compact index is included in the repository, so normal builds and tests do not depend on the ignored `research/` directory. `npm test` builds the current source before running unit, parser, and full-script integration tests.
+The output is `dist/iig-uops-bridge.user.js`. The compact matching and support datasets are included in the repository, so normal builds and tests do not depend on the ignored `research/` directory. `npm test` builds the current source before running unit, parser, and full-script integration tests.
 
 Browser tests use Intel's original renderer with small data snapshots, so they do not depend on the live sites. GM APIs are simulated in these tests; importing the script into Tampermonkey and making real cross-origin requests require separate manual verification.
 
@@ -93,7 +111,7 @@ npm test
 
 The downloader discovers the data URL from Intel's current page and renderer. If the main site is unavailable, it tries Intel's official static renderer on `www.intel.com`, then `www.intel.cn`, and reads the XML URL from that renderer. It retries temporary network/server failures; HTTP 403 switches to the next source without repeated retries. If all sources fail, the update fails and retains the previous data. It keeps a stable local filename while reading the actual version from the XML. To reuse downloaded materials, run `npm run data:build`. Raw downloads are stored in the ignored `research/` directory. Bump the version in `package.json` and rebuild before distributing an update.
 
-Run data-tool regression tests with `python3 -m unittest discover -s tests -p '*_test.py'` (Python 3.9+). These tests cover blocked sources, fallback, transient failures, preservation of previous downloads, and recovery of missing detail URLs from the official catalog. Index regeneration now requires `research/uops-instructions.csv`; run `npm run data:update` to refresh older research directories.
+Run data-tool regression tests with `python3 -m unittest discover -s tests -p '*_test.py'` (Python 3.9+). These tests cover blocked sources, fallback, transient failures, preservation of previous downloads, and recovery of missing detail URLs from the official catalog. Regeneration requires `research/uops-instructions.csv` and the pinned support sources under `research/support/`; run `npm run data:update` to refresh older research directories. Both generated datasets are staged before replacing either output. See [support generation and source upgrades](scripts/SUPPORT_DATA.md).
 
 Code layout:
 
@@ -101,6 +119,8 @@ Code layout:
 | --- | --- |
 | `src/i18n.ts` | Translation catalog, language detection, and message interpolation |
 | `src/match.ts` | Instruction matching |
+| `src/support.ts` | Architecture ISA assessment |
+| `scripts/build_support.py`, `scripts/support-*.json` | Pinned support sources, mappings and generation policy |
 | `src/parser.ts`, `src/service.ts` | Measurement parsing, requests, and caching |
 | `src/guide.ts` | Intel Guide DOM adapter |
 | `src/main.ts`, `src/ui.ts` | Injection, settings, and the three views |
@@ -114,7 +134,7 @@ Three workflows are available:
 
 - **Build and test** (`.github/workflows/build.yml`): runs on pushes, pull requests, and manual dispatch. Builds the userscript and runs unit/DOM tests plus Chromium and Firefox browser tests. Successful runs upload the installable script as an artifact retained for 30 days.
 - **Build and release** (`.github/workflows/release.yml`): runs when a `vX.Y.Z` tag is pushed. Validates the package version, builds, and runs downloader, unit/DOM, Chromium, and Firefox tests before publishing a GitHub Release with `iig-uops-bridge.user.js` and its SHA-256 checksum. Uses the committed index without downloading fresh source data. An interrupted draft can be resumed by rerunning the workflow; a published release is left unchanged.
-- **Update instruction index** (`.github/workflows/update-index.yml`): runs every Monday at **03:17 UTC** and can be started manually. Downloads official sources, validates and regenerates the index, and checks for changes. When the index changes, it increments the patch version, rebuilds, tests, and opens or refreshes one PR on `automation/update-instruction-index`. Unchanged data produces no new version or PR. Download or test failures stop the update. Raw downloads stay ignored.
+- **Update instruction index** (`.github/workflows/update-index.yml`): runs every Monday at **03:17 UTC** and can be started manually. Downloads official sources, validates and regenerates both matching and support data, and checks both for changes. XED and LLVM sources remain pinned until an explicit source-version upgrade. When the index changes, it increments the patch version, rebuilds, tests, and opens or refreshes one PR on `automation/update-instruction-index`. Unchanged data produces no new version or PR. Download or test failures stop the update. Raw downloads stay ignored.
 
 To enable updates, put the workflows on the repository's default branch and allow Actions to create pull requests under **Settings → Actions → General → Workflow permissions**. The update job requests repository-content and pull-request write permissions; the build job only reads repository contents. No personal token or extra secrets are needed. See the [create-pull-request permission requirements](https://github.com/peter-evans/create-pull-request#workflow-permissions).
 
@@ -124,16 +144,16 @@ Install published versions from [Releases](https://github.com/LXYan2333/iig-uops
 
 ## Publishing a release
 
-Set the package version, rebuild, and commit `package.json`, `package-lock.json`, and `dist/iig-uops-bridge.user.js` before tagging. The tag must exactly match the package version, prefixed with `v`; for example, package version `1.0.1` requires tag `v1.0.1`.
+Set the package version, rebuild, and commit `package.json`, `package-lock.json`, and `dist/iig-uops-bridge.user.js` before tagging. The tag must exactly match the package version, prefixed with `v`; for example, package version `1.1.0` requires tag `v1.1.0`.
 
 ```bash
-npm version 1.0.1 --no-git-tag-version
+npm version 1.1.0 --no-git-tag-version
 npm test
 git add package.json package-lock.json dist/iig-uops-bridge.user.js
-git commit -m "Prepare v1.0.1 release"
-git tag -a v1.0.1 -m "Release v1.0.1"
+git commit -m "Prepare v1.1.0 release"
+git tag -a v1.1.0 -m "Release v1.1.0"
 git push origin main
-git push origin v1.0.1
+git push origin v1.1.0
 ```
 
 The release job uses the built-in `GITHUB_TOKEN` with `contents: write`; no additional secret is required. Wait for **Build and release** to succeed before sharing the download link. Use a new version for subsequent releases instead of moving an existing tag.
@@ -143,3 +163,5 @@ The release job uses the built-in `GITHUB_TOKEN` with `contents: write`; no addi
 [Intel Intrinsics Guide](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html), [uops.info XML](https://uops.info/xml.html), and the [uops.info table](https://uops.info/table.html).
 
 The generated index records SHA-256 hashes of its inputs. Test snapshot attribution and the original jQuery license notices are documented in [`tests/fixtures/SOURCES.txt`](tests/fixtures/SOURCES.txt) and the corresponding files. This project's code does not relicense those third-party datasets or scripts.
+
+Architecture support data derives from [Intel XED](https://github.com/intelxed/xed) (Apache-2.0) and [LLVM](https://github.com/llvm/llvm-project) (Apache-2.0 with LLVM exceptions). [Third-party notices](third_party/NOTICE.txt) and licenses are retained in `third_party/` and embedded in the userscript.
