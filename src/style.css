@@ -4,3 +4,12 @@
 .architecture-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:5px;min-width:0;max-height:16rem;overflow:auto;border:1px solid #d6e2e7;border-radius:5px;padding:8px;margin:4px 0}.architecture-choices label{flex-wrap:nowrap;align-items:flex-start;cursor:pointer;padding:3px}.architecture-choices input{flex:none;margin-top:3px;accent-color:#00768a}.architecture-choices input:focus-visible{outline:2px solid #007c91;outline-offset:2px}.toolbar .architecture-picker{margin-left:0;min-width:0;max-width:100%}.toolbar .architecture-picker[open]{flex-basis:100%;order:2}.architecture-picker summary{overflow-wrap:anywhere}.comparison-scroll{max-width:100%;overflow-x:auto}.comparison-table{min-width:560px}.comparison-table th:first-child{width:24%}.comparison-table tbody th{font-size:12px;font-weight:500;background:transparent}.reference-tag{display:block}.reference-picker{margin:10px 0}.architecture-details summary{overflow-wrap:anywhere}
 
 .support-details{font-family:system-ui,sans-serif;font-size:12px}.support-details summary{padding:0}.support-details ul{padding-left:20px}.support-details+small,.comparison-table td>small{display:block;margin-top:4px}.source-links{width:100%;text-align:left}.source-links th,.source-links td{padding:6px;vertical-align:top}.support-details a{overflow-wrap:anywhere}
+.architecture-vendors{grid-template-columns:minmax(0,3fr) minmax(155px,1fr);gap:12px;max-height:none;overflow:visible;border:0;padding:2px 0 0}
+.architecture-vendor{--vendor-color:#0068b5;min-width:0;margin:0;padding:8px 10px 10px;border:1px solid #c8dfef;border-radius:7px;background:#f2f8fd;color:var(--vendor-color)}
+.architecture-vendor.amd{--vendor-color:#c62828;border-color:#efcece;background:#fff6f5}
+.architecture-vendor legend{padding:0 6px;font-size:14px;font-weight:700;letter-spacing:.2px}
+.vendor-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:3px 8px;max-height:20rem;overflow:auto}
+.architecture-vendor label{padding:5px 4px;border-radius:4px;color:var(--vendor-color)}
+.architecture-vendor label:hover{background:#ffffffc9}
+.architecture-vendor input{accent-color:var(--vendor-color)}
+@media(max-width:720px){.architecture-vendors{grid-template-columns:minmax(0,1fr)}}

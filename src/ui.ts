@@ -308,12 +308,18 @@ export function toolbar(settings: Settings, change: (s: Settings) => void, servi
     bar.append(el('span', t('uops.info 桥接'), 'brand'));
     const picker = el('details', undefined, 'architecture-picker');
     archSummary = el('summary'); picker.append(archSummary);
-    archChoices = el('fieldset', undefined, 'architecture-choices');
+    archChoices = el('fieldset', undefined, 'architecture-choices architecture-vendors');
     archChoices.append(el('legend', t('感兴趣架构'), 'sr-only'));
-    for (const a of architectures) {
-      const checkbox = el('input'); checkbox.type = 'checkbox'; checkbox.value = a.id;
-      const label = el('label'); label.append(checkbox, document.createTextNode(a.name)); archChoices.append(label);
-      checkbox.addEventListener('change', () => change({ ...settings, arches: checkbox.checked ? [...settings.arches, a.id] : settings.arches.filter(id => id !== a.id) }));
+    for (const vendor of ['Intel', 'AMD']) {
+      const group = el('fieldset', undefined, `architecture-vendor ${vendor.toLowerCase()}`);
+      group.append(el('legend', vendor));
+      const choices = el('div', undefined, 'vendor-choices');
+      for (const a of architectures.filter(a => a.name.startsWith('AMD ') === (vendor === 'AMD'))) {
+        const checkbox = el('input'); checkbox.type = 'checkbox'; checkbox.value = a.id;
+        const label = el('label'); label.append(checkbox, document.createTextNode(a.name)); choices.append(label);
+        checkbox.addEventListener('change', () => change({ ...settings, arches: checkbox.checked ? [...settings.arches, a.id] : settings.arches.filter(id => id !== a.id) }));
+      }
+      group.append(choices); archChoices.append(group);
     }
     refreshArches(); picker.append(archChoices);
     mode = el('select'); mode.setAttribute('aria-label', t('展示方式'));
