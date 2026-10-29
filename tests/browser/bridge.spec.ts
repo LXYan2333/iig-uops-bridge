@@ -267,7 +267,54 @@ test('a failed request preserves static support information and a retry control'
   await expect(c).not.toContainText('no measurements');
 });
 
-test('groups architecture text by the live Guide family palette while preserving vendor panels', async ({ page }) => {
+for (const mode of ['inline', 'sidebar']) {
+  test(`reference architectures share grouped styling and retain temporary selections in ${mode} mode`, async ({ page }) => {
+    const calls = await setup(page, mode, 'en');
+    const c = card(page, '_mm512_cvtepi64_pd'); await c.locator('.signature').click();
+    const host = mode === 'sidebar' ? page.locator('[data-iig-uops="sidebar"]') : c;
+    const references = host.locator('.reference-picker');
+    await references.locator('summary').click();
+    await expect(references.locator('.intel input')).toHaveCount(7);
+    await expect(references.locator('.amd input')).toHaveCount(2);
+    await expect(references.locator('input[value="TGL"], input[value="ADL-E"]')).toHaveCount(0);
+    const palette = await page.locator('#techs .AVX_512').evaluate(node => getComputedStyle(node).borderLeftColor);
+    for (const vendor of ['intel', 'amd']) {
+      await expect(references.locator(`.${vendor} [data-family="avx512"]`)).toHaveCSS('border-left-color', palette);
+      await expect(references.locator(`.${vendor} [data-family="avx512"]`)).toHaveCSS('border-top-color', palette);
+    }
+    await expect(references.locator('.intel label').first()).toHaveCSS('color', 'rgb(0, 104, 181)');
+    await expect(references.locator('.amd label').first()).toHaveCSS('color', 'rgb(198, 40, 40)');
+    if (mode === 'sidebar') {
+      const intel = (await references.locator('.intel').boundingBox())!;
+      const amd = (await references.locator('.amd').boundingBox())!;
+      expect(amd.y).toBeGreaterThanOrEqual(intel.y + intel.height);
+    }
+    for (const [id, name] of [['ICL', 'Ice Lake'], ['ZEN4', 'AMD Zen4']]) {
+      await references.getByRole('checkbox', { name, exact: true }).check();
+      await expect(host.locator(`tr[data-arch="${id}"] .reference-tag`)).toHaveText('Reference architecture');
+      await expect(references.getByRole('checkbox', { name, exact: true })).toBeFocused();
+    }
+    await expect(references).toHaveAttribute('open', '');
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem('test-gm:iig-uops:settings:1')!))).toMatchObject({ arch: 'TGL' });
+    const alderLake = references.getByRole('checkbox', { name: 'Alder Lake-P', exact: true });
+    await alderLake.focus();
+    await expect(references.locator('[role="tooltip"]')).toBeVisible();
+    await alderLake.press('Escape');
+    await expect(references.locator('[role="tooltip"]')).toBeHidden();
+    await page.getByLabel('Language', { exact: true }).selectOption('zh-CN');
+    for (const id of ['ICL', 'ZEN4']) {
+      await expect(references.locator(`input[value="${id}"]`)).toBeChecked();
+      await expect(host.locator(`tr[data-arch="${id}"] .reference-tag`)).toHaveText('参考架构');
+    }
+    await references.getByRole('checkbox', { name: 'Ice Lake', exact: true }).uncheck();
+    await expect(host.locator('tr[data-arch="ICL"]')).toHaveCount(0);
+    await expect(host.locator('tr[data-arch="TGL"]')).toHaveCount(1);
+    await expect(host.locator('tr[data-arch="ZEN4"]')).toHaveCount(1);
+    expect(calls).toHaveLength(1);
+  });
+}
+
+test('marks architecture groups with Guide family borders while preserving vendor text and panels', async ({ page }) => {
   await setup(page, 'inline', 'en');
   const picker = page.locator('.architecture-picker');
   await picker.locator('summary').click();
@@ -278,7 +325,10 @@ test('groups architecture text by the live Guide family palette while preserving
   for (const [arch, family, selector] of [['WSM', 'sse', '.SSE_ALL'], ['SNB', 'avx', '.AVX_ALL'], ['ZEN3', 'avx', '.AVX_ALL'], ['TGL', 'avx512', '.AVX_512'], ['ADL-P', 'avx512', '.AVX_512'], ['ADL-E', 'avx', '.AVX_ALL'], ['ZEN4', 'avx512', '.AVX_512'], ['EMR', 'amx', '.AMX']]) {
     const label = picker.locator(`[data-family="${family}"] label`).filter({ has: page.locator(`input[value="${arch}"]`) });
     const color = await page.locator(`#techs ${selector}`).evaluate(node => getComputedStyle(node).borderLeftColor);
-    await expect(label).toHaveCSS('color', color);
+    await expect(label).toHaveCSS('color', arch.startsWith('ZEN') ? 'rgb(198, 40, 40)' : 'rgb(0, 104, 181)');
+    const group = label.locator('..');
+    await expect(group).toHaveCSS('border-left-color', color);
+    await expect(group).toHaveCSS('border-top-color', color);
   }
   const alderLake = picker.getByRole('checkbox', { name: 'Alder Lake-P', exact: true });
   await expect(alderLake).toHaveAccessibleDescription(/AVX-512 is disabled on most consumer/);
@@ -309,8 +359,8 @@ test('groups architecture text by the live Guide family palette while preserving
   await picker.locator('summary').click();
   await page.locator('#techs .AVX_ALL').evaluate(node => { (node as HTMLElement).style.borderColor = 'rgb(20, 80, 40)'; });
   await picker.locator('summary').click();
-  await expect(picker.locator('.intel [data-family="avx"] label').first()).toHaveCSS('color', 'rgb(20, 80, 40)');
-  await expect(picker.locator('.amd [data-family="avx"] label').first()).toHaveCSS('color', 'rgb(20, 80, 40)');
+  await expect(picker.locator('.intel [data-family="avx"]').first()).toHaveCSS('border-left-color', 'rgb(20, 80, 40)');
+  await expect(picker.locator('.amd [data-family="avx"]').first()).toHaveCSS('border-left-color', 'rgb(20, 80, 40)');
 });
 
 test('keeps the tooltip in the viewport when scrolling, resizing and switching language', async ({ page }) => {

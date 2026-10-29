@@ -65,6 +65,65 @@ function supportNotice(support: SupportAssessment, missing: boolean) {
   return details;
 }
 
+let nextArchitectureNote = 0;
+
+function architectureChoices(ids: string[], selected: string[], picker: HTMLDetailsElement, legend: string, change: (id: string, checked: boolean) => void) {
+  const element = el('fieldset', undefined, 'architecture-choices architecture-vendors');
+  element.append(el('legend', legend, 'sr-only'));
+  const cleanups: (() => void)[] = [];
+  const known = new Map(architectures.map(a => [a.id, a]));
+  const wanted = new Set(ids);
+  const items = [...architectures.filter(a => wanted.has(a.id)), ...ids.filter(id => !known.has(id)).map(id => ({ id, name: archName(id) }))];
+  const vendorOf = (id: string) => !known.has(id) ? 'unknown' : known.get(id)!.name.startsWith('AMD ') ? 'AMD' : 'Intel';
+  const colors = readTechFamilyColors();
+  const familyOf = new Map(items.map(a => [a.id, architectureFamily(a.id)]));
+  for (const vendor of ['Intel', 'AMD', 'unknown']) {
+    if (!items.some(a => vendorOf(a.id) === vendor)) continue;
+    const group = el('fieldset', undefined, `architecture-vendor ${vendor.toLowerCase()}`);
+    group.append(el('legend', vendor === 'unknown' ? t('未分类') : vendor));
+    group.dataset.vendor = vendor;
+    const choices = el('div', undefined, 'vendor-choices');
+    for (const family of techFamilies) {
+      const members = items.filter(a => vendorOf(a.id) === vendor && familyOf.get(a.id) === family.id);
+      if (!members.length) continue;
+      const row = el('div', undefined, 'architecture-family'); row.dataset.family = family.id;
+      row.setAttribute('role', 'group'); row.setAttribute('aria-label', family.id === 'unknown' ? t('未分类') : family.label);
+      row.style.setProperty('--family-color', colors[family.id]);
+      for (const a of members) {
+        const checkbox = el('input'); checkbox.type = 'checkbox'; checkbox.value = a.id; checkbox.checked = selected.includes(a.id);
+        const label = el('label'); label.title = family.id === 'unknown' ? t('未分类') : family.label;
+        label.append(checkbox, document.createTextNode(a.name)); row.append(label);
+        if (a.id === 'ADL-P') {
+          const marker = el('sup', '*'); marker.setAttribute('aria-hidden', 'true'); label.append(marker);
+          label.removeAttribute('title');
+          const note = el('div', t('* Alder Lake-P 消费级产品大多已屏蔽 AVX-512；部分早期桌面型号需关闭 E 核并使用兼容的 BIOS／微码才可能启用。'), 'architecture-tooltip');
+          note.id = `alder-lake-avx512-note-${++nextArchitectureNote}`; note.setAttribute('role', 'tooltip'); note.hidden = true;
+          group.append(note);
+          checkbox.setAttribute('aria-describedby', note.id);
+          cleanups.push(attachTooltip(label, note, picker));
+        }
+        checkbox.addEventListener('change', () => change(a.id, checkbox.checked));
+      }
+      choices.append(row);
+    }
+    group.append(choices);
+    element.append(group);
+  }
+
+  const refreshColors = () => {
+    if (!picker.open) return;
+    const colors = readTechFamilyColors();
+    for (const family of techFamilies) {
+      for (const row of element.querySelectorAll<HTMLElement>(`[data-family="${family.id}"]`)) row.style.setProperty('--family-color', colors[family.id]);
+    }
+  };
+  picker.addEventListener('toggle', refreshColors);
+  return { element, dispose() {
+    cleanups.forEach(cleanup => cleanup());
+    picker.removeEventListener('toggle', refreshColors);
+  } };
+}
+
 let nextVariantGroup = 0;
 
 class GroupView {
@@ -73,7 +132,8 @@ class GroupView {
   private chosen?: Variant;
   private referenceArches: string[] = [];
   private referencesOpen = false;
-  private referenceScroll = 0;
+  private referenceScroll = new Map<string, number>();
+  private cleanupReferences?: () => void;
   private referenceFocus?: string;
   private requestVersion = 0;
   private alternativesOpen = false;
@@ -87,7 +147,7 @@ class GroupView {
   }
   setArches(arches: string[]) { this.currentArches = [...arches]; this.referenceArches = this.referenceArches.filter(a => !arches.includes(a)); this.render(); }
   setLanguage(match: MatchResult) { this.match = match; this.render(); }
-  dispose() { this.requestVersion++; }
+  dispose() { this.requestVersion++; this.cleanupReferences?.(); this.cleanupReferences = undefined; }
   private supportNotice(support: SupportAssessment, arch: string, missing: boolean) {
     const details = supportNotice(support, missing);
     details.open = this.supportOpen.has(arch);
@@ -104,6 +164,10 @@ class GroupView {
     return cell;
   }
   private render(force = false) {
+    for (const panel of this.element.querySelectorAll<HTMLElement>('.reference-picker [data-vendor]')) {
+      this.referenceScroll.set(panel.dataset.vendor!, panel.querySelector('.vendor-choices')!.scrollTop);
+    }
+    this.cleanupReferences?.(); this.cleanupReferences = undefined;
     const version = ++this.requestVersion;
     const displayedArches = [...this.currentArches, ...this.referenceArches];
     this.element.replaceChildren();
@@ -236,20 +300,16 @@ class GroupView {
       const references = el('details', undefined, 'reference-picker'); references.open = this.referencesOpen;
       references.addEventListener('toggle', () => { this.referencesOpen = references.open; });
       references.append(el('summary', t('参考架构（多选）')));
-      const choices = el('fieldset', undefined, 'architecture-choices');
-      choices.append(el('legend', t('参考架构（多选）'), 'sr-only'));
-      for (const arch of available) {
-        const checkbox = el('input'); checkbox.type = 'checkbox'; checkbox.value = arch; checkbox.checked = this.referenceArches.includes(arch);
-        const label = el('label'); label.append(checkbox, document.createTextNode(archName(arch)));
-        checkbox.addEventListener('change', () => {
-          this.referencesOpen = references.open;
-          this.referenceArches = checkbox.checked ? [...this.referenceArches, arch] : this.referenceArches.filter(a => a !== arch);
-          this.referenceScroll = choices.scrollTop; this.referenceFocus = arch; this.render();
-        });
-        choices.append(label);
-      }
+      const selection = architectureChoices(available, this.referenceArches, references, t('参考架构（多选）'), (arch, checked) => {
+        this.referencesOpen = references.open;
+        this.referenceArches = checked ? [...this.referenceArches, arch] : this.referenceArches.filter(a => a !== arch);
+        this.referenceFocus = arch; this.render();
+      });
+      const choices = selection.element; this.cleanupReferences = selection.dispose;
       references.append(choices, el('p', t('不改变感兴趣架构；参考数据会作为额外行显示。'), 'muted')); content.append(references);
-      choices.scrollTop = this.referenceScroll;
+      for (const panel of choices.querySelectorAll<HTMLElement>('[data-vendor]')) {
+        panel.querySelector('.vendor-choices')!.scrollTop = this.referenceScroll.get(panel.dataset.vendor!) ?? 0;
+      }
       if (this.referenceFocus) {
         [...choices.querySelectorAll<HTMLInputElement>('input')].find(input => input.value === this.referenceFocus)?.focus({ preventScroll: true });
         this.referenceFocus = undefined;
@@ -305,56 +365,19 @@ export function toolbar(settings: Settings, change: (s: Settings) => void, servi
     for (const checkbox of archChoices.querySelectorAll<HTMLInputElement>('input')) checkbox.checked = settings.arches.includes(checkbox.value);
   }
   let hideNative: HTMLInputElement;
-  let cleanupTooltip: (() => void) | undefined;
+  let cleanupChoices: (() => void) | undefined;
   function render() {
-    cleanupTooltip?.();
+    cleanupChoices?.();
     host.lang = getLanguage();
     const bar = el('div', undefined, 'toolbar');
     bar.append(el('span', t('uops.info 桥接'), 'brand'));
     const picker = el('details', undefined, 'architecture-picker');
     archSummary = el('summary'); picker.append(archSummary);
-    archChoices = el('fieldset', undefined, 'architecture-choices architecture-vendors');
-    archChoices.append(el('legend', t('感兴趣架构'), 'sr-only'));
-    const colors = readTechFamilyColors();
-    const familyOf = new Map(architectures.map(a => [a.id, architectureFamily(a.id)]));
-    for (const vendor of ['Intel', 'AMD']) {
-      const group = el('fieldset', undefined, `architecture-vendor ${vendor.toLowerCase()}`);
-      group.append(el('legend', vendor));
-      const choices = el('div', undefined, 'vendor-choices');
-      for (const family of techFamilies) {
-        const members = architectures.filter(a => a.name.startsWith('AMD ') === (vendor === 'AMD') && familyOf.get(a.id) === family.id);
-        if (!members.length) continue;
-        const row = el('div', undefined, 'architecture-family'); row.dataset.family = family.id;
-        row.setAttribute('role', 'group'); row.setAttribute('aria-label', family.id === 'unknown' ? t('未分类') : family.label);
-        row.style.setProperty('--family-color', colors[family.id]);
-        for (const a of members) {
-          const checkbox = el('input'); checkbox.type = 'checkbox'; checkbox.value = a.id;
-          const label = el('label'); label.title = family.id === 'unknown' ? t('未分类') : family.label;
-          label.append(checkbox, document.createTextNode(a.name)); row.append(label);
-          if (a.id === 'ADL-P') {
-            const marker = el('sup', '*'); marker.setAttribute('aria-hidden', 'true'); label.append(marker);
-            label.removeAttribute('title');
-            const note = el('div', t('* Alder Lake-P 消费级产品大多已屏蔽 AVX-512；部分早期桌面型号需关闭 E 核并使用兼容的 BIOS／微码才可能启用。'), 'architecture-tooltip');
-            note.id = 'alder-lake-avx512-note'; note.setAttribute('role', 'tooltip'); note.hidden = true;
-            group.append(note);
-            checkbox.setAttribute('aria-describedby', 'alder-lake-avx512-note');
-            cleanupTooltip = attachTooltip(label, note, picker);
-          }
-          checkbox.addEventListener('change', () => change({ ...settings, arches: checkbox.checked ? [...settings.arches, a.id] : settings.arches.filter(id => id !== a.id) }));
-        }
-        choices.append(row);
-      }
-      group.append(choices);
-      archChoices.append(group);
-    }
-    refreshArches(); picker.append(archChoices);
-    picker.addEventListener('toggle', () => {
-      if (!picker.open) return;
-      const liveColors = readTechFamilyColors();
-      for (const family of techFamilies) {
-        for (const row of archChoices.querySelectorAll<HTMLElement>(`[data-family="${family.id}"]`)) row.style.setProperty('--family-color', liveColors[family.id]);
-      }
+    const choices = architectureChoices(architectures.map(a => a.id), settings.arches, picker, t('感兴趣架构'), (id, checked) => {
+      change({ ...settings, arches: checked ? [...settings.arches, id] : settings.arches.filter(arch => arch !== id) });
     });
+    archChoices = choices.element; cleanupChoices = choices.dispose;
+    refreshArches(); picker.append(archChoices);
     mode = el('select'); mode.setAttribute('aria-label', t('展示方式'));
     for (const [id, label] of [['inline', t('详情内自动显示')], ['click', t('点击后展开')], ['sidebar', t('固定右侧栏')]]) mode.append(new Option(label, id));
     mode.value = settings.mode;

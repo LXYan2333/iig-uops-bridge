@@ -7,11 +7,15 @@
 .architecture-vendors{grid-template-columns:minmax(0,3fr) minmax(155px,1fr);gap:12px;max-height:none;overflow:visible;border:0;padding:2px 0 0}
 .architecture-vendor{--vendor-color:#0068b5;min-width:0;margin:0;padding:8px 10px 10px;border:1px solid #c8dfef;border-radius:7px;background:#f2f8fd;color:var(--vendor-color)}
 .architecture-vendor.amd{--vendor-color:#c62828;border-color:#efcece;background:#fff6f5}
+.architecture-vendor.unknown{--vendor-color:#506570;border-color:#d6e2e7;background:#f5f8fa}
+.architecture-vendor:only-of-type{grid-column:1/-1}
 .architecture-vendor legend{padding:0 6px;font-size:14px;font-weight:700;letter-spacing:.2px}
-.vendor-choices{display:flex;flex-direction:column;gap:10px;max-height:24rem;overflow:auto}
-.architecture-family{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:3px 8px;flex:none}
-.architecture-vendor label{padding:5px 4px;border-radius:4px;color:var(--family-color);font-weight:600}
+.vendor-choices{display:flex;flex-direction:column;gap:10px;max-height:28rem;overflow:auto}
+.architecture-family{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(145px,100%),1fr));gap:3px 8px;flex:none;border-left:10px solid var(--family-color);border-top:1px solid var(--family-color);padding:4px 6px}
+.architecture-vendor label{padding:5px 4px;border-radius:4px;color:var(--vendor-color);font-weight:600}
 .architecture-vendor label:hover{background:#ffffffc9}
 .architecture-vendor input{accent-color:var(--vendor-color)}
 .architecture-tooltip{position:fixed;top:0;left:0;z-index:2;width:min(340px,calc(100vw - 16px));max-height:calc(100vh - 16px);overflow:auto;padding:8px 10px;border:1px solid #acbdc6;border-radius:5px;background:#fff;color:#172b3a;box-shadow:0 3px 12px #14374426;font-size:12px;font-weight:400;line-height:1.5}
 @media(max-width:720px){.architecture-vendors{grid-template-columns:minmax(0,1fr)}}
+.reference-picker{container-type:inline-size}
+@container(max-width:600px){.reference-picker .architecture-vendors{grid-template-columns:minmax(0,1fr)}}

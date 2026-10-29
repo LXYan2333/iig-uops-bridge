@@ -99,7 +99,8 @@ Celeron N3000, i7-7700 and i7-8700K machines identified on
 and [GCC x86 architecture descriptions](https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html).
 Unrecognized architectures are shown in a neutral, unclassified group.
 
-Colors come from computed family border colors in the current Guide's `#techs`,
+Architecture names use Intel blue or AMD red. A left vertical bar and thin top
+border identify each family group. Their colors come from computed family border colors in the current Guide's `#techs`,
 refreshed when the picker opens. If the filters/styles are unavailable, the
 attributed `tests/fixtures/guide-style.css` palette provides the fallback.
 Grouping is by Intel family only; there is no Highway dependency.
