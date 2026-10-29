@@ -53,9 +53,14 @@ function vectorWidth(ops: string[]): number {
 }
 
 export function matchInstruction(intrinsic: Intrinsic, instruction: Instruction): MatchResult {
-  const all = byMnemonic.get(instruction.mnemonic.toUpperCase()) ?? [];
   const form = instruction.form.toLowerCase();
   const ops = formOperands(form);
+  const mnemonic = instruction.mnemonic.toUpperCase();
+  // XED/uops distinguish scalar SSE2 MOVSD/CMPSD from their string namesakes.
+  // Preserve their original class, URL and XED identifiers; only widen lookup.
+  const classes = ops.includes('XMM') && (mnemonic === 'MOVSD' || mnemonic === 'CMPSD')
+    ? [mnemonic, `${mnemonic}_XMM`] : [mnemonic];
+  const all = classes.flatMap(name => byMnemonic.get(name) ?? []);
   const width = vectorWidth(ops);
   const encoding = encodingFor(intrinsic, instruction);
   const xed = correctedXed(instruction);

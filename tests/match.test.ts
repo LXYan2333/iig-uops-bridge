@@ -8,6 +8,10 @@ const match = (name: string) => { const i = descriptor(name); return matchInstru
 describe('semantic matching', () => {
   it.each([
     ['_mm_add_ps', 'ADDPS (XMM, XMM)'],
+    ['_mm_load_sd', 'MOVSD_XMM (XMM, M64)'],
+    ['_mm_store_sd', 'MOVSD_XMM (M64, XMM)'],
+    ['_mm_move_sd', 'MOVSD_XMM_0F10 (XMM, XMM)'],
+    ['_mm_cmpeq_sd', 'CMPSD_XMM (XMM, XMM, I8)'],
     ['_mm256_add_ps', 'VADDPS (YMM, YMM, YMM)'],
     ['_mm512_cvtepi64_pd', 'VCVTQQ2PD (ZMM, ZMM)'],
     ['_mm512_mask_cvtepi64_pd', 'VCVTQQ2PD (ZMM, K, ZMM)'],
@@ -37,6 +41,21 @@ describe('semantic matching', () => {
     expect(result.related.some(v => v.name === 'VCVTQQ2PD (ZMM, M64_1to8)')).toBe(true);
     expect(result.best.every(c => !c.variant.broadcast && !c.variant.operands.some(o => o.startsWith('M')))).toBe(true);
     expect(result.related.every(v => !v.name.includes('XMM') && !v.name.includes('YMM'))).toBe(true);
+  });
+  it('keeps scalar SSE2 aliases separate from string instructions and VEX encodings', () => {
+    const load = match('_mm_load_sd');
+    expect(variantUrl(load.best[0].variant, 'TGL')).toBe('https://uops.info/html-instr/MOVSD_XMM_XMM_M64.html#TGL');
+    expect(load.best[0].variant.iform).toBe(descriptor('_mm_load_sd').instructions[0].xed);
+    expect([...load.best.map(c => c.variant), ...load.related].every(v => v.mnemonic === 'MOVSD_XMM' && v.encoding === 'legacy')).toBe(true);
+    for (const mnemonic of ['MOVSD', 'CMPSD']) {
+      const scalar = descriptor(mnemonic === 'MOVSD' ? '_mm_load_sd' : '_mm_cmpeq_sd');
+      const string = matchInstruction(scalar, { mnemonic, form: '', xed: mnemonic });
+      expect(string.confidence).toBe('confirmed');
+      expect(string.best.map(c => c.variant.id)).toEqual([mnemonic]);
+      expect(string.related).toHaveLength(0);
+      expect(matchInstruction(scalar, { ...scalar.instructions[0], xed: '' }).confidence).toBe('inferred');
+      expect(matchInstruction(scalar, { ...scalar.instructions[0], form: scalar.instructions[0].form.replace('xmm', 'ymm') }).best).toHaveLength(0);
+    }
   });
   it('links recovered shifts to the official page and keeps memory forms as alternatives', () => {
     const result = match('_mm512_shrdi_epi64');

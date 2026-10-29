@@ -1,0 +1,1216 @@
+<html>
+<head>
+<title>MOVSD_XMM (XMM, M64)</title>
+<link rel="stylesheet" href="https://www.jacklmoore.com/colorbox/example2/colorbox.css"/><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.colorbox/1.6.4/jquery.colorbox-min.js"></script><script>$(document).ready(function(){$(".iframe").colorbox({iframe:true, width:"90%", height:"90%", title:function () {return '<a href="' + this.href + '" target="_blank">' + this.href + '</a>'}});});$(document).on("cbox_open",function(){$("body").css({overflow:"hidden"})}).on("cbox_closed",function(){$("body").css({overflow:""})})</script><script src="/m.js"></script>
+</head>
+<body>
+<noscript><p><img src="https://epica.cs.uni-saarland.de/piwik.php?idsite=19&amp;rec=1" style="border:0;" alt="" /></p></noscript>
+<h1>MOVSD_XMM (XMM, M64)</h1>
+<hr>
+<table>
+<tr><td>Summary:&nbsp;</td><td>"Move or Merge Scalar Double Precision Floating-Point Value"</td></tr>
+<tr><td>Reference:&nbsp;</td><td><a class="iframe" href="https://www.felixcloutier.com/x86/movsd">https://www.felixcloutier.com/x86/movsd</a></td></tr>
+<tr><td>Extension:&nbsp;</td><td>SSE2</td></tr>
+<tr><td>Category:&nbsp;</td><td>DATAXFER</td></tr>
+<tr><td>ISA-Set:&nbsp;</td><td>SSE2</td></tr>
+<tr><td>CPL:&nbsp;</td><td>3</td></tr>
+<tr><td>iform:&nbsp;</td><td>MOVSD_XMM_XMMdq_MEMsd</td></tr>
+<tr><td>iclass:&nbsp;</td><td>MOVSD_XMM</td></tr>
+<tr><td>ASM:&nbsp;</td><td>MOVSD</td></tr>
+</table>
+<h2>Operands</h2>
+<ul>
+<li>Operand 1 (w): Register (XMM0, XMM1, XMM2, XMM3, XMM4, XMM5, XMM6, XMM7, XMM8, XMM9, XMM10, XMM11, XMM12, XMM13, XMM14, XMM15)</li>
+<li>Operand 2 (r): Memory</li>
+</ul>
+<hr><h2>Available performance data </h2><ul>
+<li><a href="#ARL-P">Arrow Lake-P</a></li>
+<li><a href="#ARL-E">Arrow Lake-E</a></li>
+<li><a href="#MTL-P">Meteor Lake-P</a></li>
+<li><a href="#MTL-E">Meteor Lake-E</a></li>
+<li><a href="#EMR">Emerald Rapids</a></li>
+<li><a href="#ADL-P">Alder Lake-P</a></li>
+<li><a href="#ADL-E">Alder Lake-E</a></li>
+<li><a href="#RKL">Rocket Lake</a></li>
+<li><a href="#TGL">Tiger Lake</a></li>
+<li><a href="#ICL">Ice Lake</a></li>
+<li><a href="#CLX">Cascade Lake</a></li>
+<li><a href="#CNL">Cannon Lake</a></li>
+<li><a href="#SKX">Skylake-X</a></li>
+<li><a href="#CFL">Coffee Lake</a></li>
+<li><a href="#KBL">Kaby Lake</a></li>
+<li><a href="#SKL">Skylake</a></li>
+<li><a href="#BDW">Broadwell</a></li>
+<li><a href="#HSW">Haswell</a></li>
+<li><a href="#IVB">Ivy Bridge</a></li>
+<li><a href="#SNB">Sandy Bridge</a></li>
+<li><a href="#WSM">Westmere</a></li>
+<li><a href="#NHM">Nehalem</a></li>
+<li><a href="#WOL">Wolfdale</a></li>
+<li><a href="#CON">Conroe</a></li>
+<li><a href="#TRM">Tremont</a></li>
+<li><a href="#GLP">Goldmont Plus</a></li>
+<li><a href="#GLM">Goldmont</a></li>
+<li><a href="#AMT">Airmont</a></li>
+<li><a href="#BNL">Bonnell</a></li>
+<li><a href="#ZEN5">AMD Zen 5</a></li>
+<li><a href="#ZEN4">AMD Zen 4</a></li>
+<li><a href="#ZEN3">AMD Zen 3</a></li>
+<li><a href="#ZEN2">AMD Zen 2</a></li>
+<li><a href="#ZEN+">AMD Zen+</a></li>
+</ul>
+<hr><h2 id="ARL-P">Arrow Lake-P</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/ARL-P/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;8</li>
+<li>
+<a href="../html-lat/ARL-P/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;8</li>
+<li>
+<a href="../html-lat/ARL-P/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;6</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.33</li>
+<li><a href="../html-tp/ARL-P/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.33</li>
+<li><a href="../html-tp/ARL-P/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.33</li>
+</ul></li>
+<li><a href="../html-tp/ARL-P/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/ARL-P/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*LD</li>
+</ul>
+</ul>
+<hr><h2 id="ARL-E">Arrow Lake-E</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/ARL-E/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;9</li>
+<li>
+<a href="../html-lat/ARL-E/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;9</li>
+<li>
+<a href="../html-lat/ARL-E/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;5</li>
+</ul></li>
+<li>Throughput<ul>
+<li><a href="../html-tp/ARL-E/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.33</li>
+<li><a href="../html-tp/ARL-E/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.33</li>
+</ul></li>
+<li><a href="../html-tp/ARL-E/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+</ul>
+</ul>
+<hr><h2 id="MTL-P">Meteor Lake-P</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/MTL-P/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/MTL-P/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/MTL-P/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.33</li>
+<li><a href="../html-tp/MTL-P/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.33</li>
+<li><a href="../html-tp/MTL-P/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.33</li>
+</ul></li>
+<li><a href="../html-tp/MTL-P/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/MTL-P/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p23A</li>
+</ul>
+</ul>
+<hr><h2 id="MTL-E">Meteor Lake-E</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/MTL-E/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;9</li>
+<li>
+<a href="../html-lat/MTL-E/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;9</li>
+<li>
+<a href="../html-lat/MTL-E/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;5</li>
+</ul></li>
+<li>Throughput<ul>
+<li><a href="../html-tp/MTL-E/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/MTL-E/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/MTL-E/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+</ul>
+</ul>
+<hr><h2 id="EMR">Emerald Rapids</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/EMR/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/EMR/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/EMR/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.33</li>
+<li><a href="../html-tp/EMR/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.33</li>
+<li><a href="../html-tp/EMR/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.33</li>
+</ul></li>
+<li><a href="../html-tp/EMR/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/EMR/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p23A</li>
+</ul>
+</ul>
+<hr><h2 id="ADL-P">Alder Lake-P</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/ADL-P/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/ADL-P/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/ADL-P/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.33</li>
+<li><a href="../html-tp/ADL-P/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.33</li>
+<li><a href="../html-tp/ADL-P/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.33</li>
+</ul></li>
+<li><a href="../html-tp/ADL-P/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/ADL-P/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p23A</li>
+</ul>
+</ul>
+<hr><h2 id="ADL-E">Alder Lake-E</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/ADL-E/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;9</li>
+<li>
+<a href="../html-lat/ADL-E/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;9</li>
+<li>
+<a href="../html-lat/ADL-E/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;7</li>
+</ul></li>
+<li>Throughput<ul>
+<li><a href="../html-tp/ADL-E/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/ADL-E/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/ADL-E/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+</ul>
+</ul>
+<hr><h2 id="RKL">Rocket Lake</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/RKL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/RKL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/RKL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/RKL/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/RKL/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/RKL/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/RKL/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p23</li>
+</ul>
+</ul>
+<hr><h2 id="TGL">Tiger Lake</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/TGL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/TGL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/TGL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/TGL/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/TGL/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/TGL/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/TGL/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p23</li>
+</ul>
+</ul>
+<hr><h2 id="ICL">Ice Lake</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/ICL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/ICL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/ICL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/ICL/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/ICL/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/ICL/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/ICL/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p23</li>
+</ul>
+</ul>
+<hr><h2 id="CLX">Cascade Lake</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/CLX/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/CLX/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/CLX/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/CLX/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/CLX/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/CLX/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/CLX/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p23</li>
+</ul>
+</ul>
+<hr><h2 id="CNL">Cannon Lake</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/CNL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/CNL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/CNL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/CNL/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/CNL/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/CNL/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/CNL/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p23</li>
+</ul>
+</ul>
+<hr><h2 id="SKX">Skylake-X</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/SKX/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/SKX/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/SKX/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/SKX/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/SKX/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/SKX/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/SKX/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p23</li>
+</ul>
+<li>IACA 2.3</li>
+<ul>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/SKX/MOVSD_XMM_XMM_M64-IACA2.3.html">IACA:</a> 0.50
+</li>
+</ul></li>
+<li><a href="../html-tp/SKX/MOVSD_XMM_XMM_M64-IACA2.3.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/SKX/MOVSD_XMM_XMM_M64-IACA2.3.html">Port usage:</a> 1*p23</li>
+</ul>
+<li>IACA 3.0</li>
+<ul>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/SKX/MOVSD_XMM_XMM_M64-IACA3.0.html">IACA:</a> 0.49
+</li>
+</ul></li>
+<li><a href="../html-tp/SKX/MOVSD_XMM_XMM_M64-IACA3.0.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/SKX/MOVSD_XMM_XMM_M64-IACA3.0.html">Port usage:</a> 1*p23</li>
+</ul>
+</ul>
+<hr><h2 id="CFL">Coffee Lake</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/CFL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/CFL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/CFL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/CFL/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/CFL/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/CFL/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/CFL/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p23</li>
+</ul>
+</ul>
+<hr><h2 id="KBL">Kaby Lake</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/KBL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/KBL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/KBL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/KBL/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/KBL/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/KBL/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/KBL/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p23</li>
+</ul>
+</ul>
+<hr><h2 id="SKL">Skylake</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/SKL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/SKL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/SKL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/SKL/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/SKL/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/SKL/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/SKL/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p23</li>
+</ul>
+<li>IACA 2.3</li>
+<ul>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/SKL/MOVSD_XMM_XMM_M64-IACA2.3.html">IACA:</a> 0.50
+</li>
+</ul></li>
+<li><a href="../html-tp/SKL/MOVSD_XMM_XMM_M64-IACA2.3.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/SKL/MOVSD_XMM_XMM_M64-IACA2.3.html">Port usage:</a> 1*p23</li>
+</ul>
+<li>IACA 3.0</li>
+<ul>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/SKL/MOVSD_XMM_XMM_M64-IACA3.0.html">IACA:</a> 0.49
+</li>
+</ul></li>
+<li><a href="../html-tp/SKL/MOVSD_XMM_XMM_M64-IACA3.0.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/SKL/MOVSD_XMM_XMM_M64-IACA3.0.html">Port usage:</a> 1*p23</li>
+</ul>
+</ul>
+<hr><h2 id="BDW">Broadwell</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/BDW/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;6</li>
+<li>
+<a href="../html-lat/BDW/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;6</li>
+<li>
+<a href="../html-lat/BDW/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;5</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/BDW/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/BDW/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/BDW/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/BDW/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p23</li>
+</ul>
+<li>IACA 2.2</li>
+<ul>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/BDW/MOVSD_XMM_XMM_M64-IACA2.2.html">IACA:</a> 0.50
+ (with the -no_interiteration flag: 0.50)
+</li>
+</ul></li>
+<li><a href="../html-tp/BDW/MOVSD_XMM_XMM_M64-IACA2.2.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/BDW/MOVSD_XMM_XMM_M64-IACA2.2.html">Port usage:</a> 1*p23</li>
+</ul>
+<li>IACA 2.3</li>
+<ul>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/BDW/MOVSD_XMM_XMM_M64-IACA2.3.html">IACA:</a> 0.50
+</li>
+</ul></li>
+<li><a href="../html-tp/BDW/MOVSD_XMM_XMM_M64-IACA2.3.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/BDW/MOVSD_XMM_XMM_M64-IACA2.3.html">Port usage:</a> 1*p23</li>
+</ul>
+<li>IACA 3.0</li>
+<ul>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/BDW/MOVSD_XMM_XMM_M64-IACA3.0.html">IACA:</a> 0.49
+</li>
+</ul></li>
+<li><a href="../html-tp/BDW/MOVSD_XMM_XMM_M64-IACA3.0.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/BDW/MOVSD_XMM_XMM_M64-IACA3.0.html">Port usage:</a> 1*p23</li>
+</ul>
+</ul>
+<hr><h2 id="HSW">Haswell</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/HSW/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;6</li>
+<li>
+<a href="../html-lat/HSW/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;6</li>
+<li>
+<a href="../html-lat/HSW/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;5</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/HSW/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/HSW/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/HSW/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/HSW/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p23</li>
+</ul>
+<li>IACA 2.1</li>
+<ul>
+<li><a href="../html-lat/HSW/MOVSD_XMM_XMM_M64-IACA2.1.html">Latency:</a> 6</li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/HSW/MOVSD_XMM_XMM_M64-IACA2.1.html">IACA:</a> 0.50
+ (with the -no_interiteration flag: 0.50)
+</li>
+</ul></li>
+<li><a href="../html-tp/HSW/MOVSD_XMM_XMM_M64-IACA2.1.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/HSW/MOVSD_XMM_XMM_M64-IACA2.1.html">Port usage:</a> 1*p23</li>
+</ul>
+<li>IACA 2.2</li>
+<ul>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/HSW/MOVSD_XMM_XMM_M64-IACA2.2.html">IACA:</a> 0.50
+ (with the -no_interiteration flag: 0.50)
+</li>
+</ul></li>
+<li><a href="../html-tp/HSW/MOVSD_XMM_XMM_M64-IACA2.2.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/HSW/MOVSD_XMM_XMM_M64-IACA2.2.html">Port usage:</a> 1*p23</li>
+</ul>
+<li>IACA 2.3</li>
+<ul>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/HSW/MOVSD_XMM_XMM_M64-IACA2.3.html">IACA:</a> 0.50
+</li>
+</ul></li>
+<li><a href="../html-tp/HSW/MOVSD_XMM_XMM_M64-IACA2.3.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/HSW/MOVSD_XMM_XMM_M64-IACA2.3.html">Port usage:</a> 1*p23</li>
+</ul>
+<li>IACA 3.0</li>
+<ul>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/HSW/MOVSD_XMM_XMM_M64-IACA3.0.html">IACA:</a> 0.49
+</li>
+</ul></li>
+<li><a href="../html-tp/HSW/MOVSD_XMM_XMM_M64-IACA3.0.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/HSW/MOVSD_XMM_XMM_M64-IACA3.0.html">Port usage:</a> 1*p23</li>
+</ul>
+</ul>
+<hr><h2 id="IVB">Ivy Bridge</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/IVB/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;6</li>
+<li>
+<a href="../html-lat/IVB/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;6</li>
+<li>
+<a href="../html-lat/IVB/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;5</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/IVB/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/IVB/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/IVB/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/IVB/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p23</li>
+</ul>
+<li>IACA 2.1</li>
+<ul>
+<li><a href="../html-lat/IVB/MOVSD_XMM_XMM_M64-IACA2.1.html">Latency:</a> 6</li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/IVB/MOVSD_XMM_XMM_M64-IACA2.1.html">IACA:</a> 0.50
+ (with the -no_interiteration flag: 0.50)
+</li>
+</ul></li>
+<li><a href="../html-tp/IVB/MOVSD_XMM_XMM_M64-IACA2.1.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/IVB/MOVSD_XMM_XMM_M64-IACA2.1.html">Port usage:</a> 1*p23</li>
+</ul>
+<li>IACA 2.2</li>
+<ul>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/IVB/MOVSD_XMM_XMM_M64-IACA2.2.html">IACA:</a> 0.50
+ (with the -no_interiteration flag: 0.50)
+</li>
+</ul></li>
+<li><a href="../html-tp/IVB/MOVSD_XMM_XMM_M64-IACA2.2.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/IVB/MOVSD_XMM_XMM_M64-IACA2.2.html">Port usage:</a> 1*p23</li>
+</ul>
+<li>IACA 2.3</li>
+<ul>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/IVB/MOVSD_XMM_XMM_M64-IACA2.3.html">IACA:</a> 0.50
+</li>
+</ul></li>
+<li><a href="../html-tp/IVB/MOVSD_XMM_XMM_M64-IACA2.3.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/IVB/MOVSD_XMM_XMM_M64-IACA2.3.html">Port usage:</a> 1*p23</li>
+</ul>
+</ul>
+<hr><h2 id="SNB">Sandy Bridge</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/SNB/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;6</li>
+<li>
+<a href="../html-lat/SNB/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;6</li>
+<li>
+<a href="../html-lat/SNB/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;5</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/SNB/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/SNB/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/SNB/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Decoded (MITE): 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/SNB/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p23</li>
+</ul>
+<li>IACA 2.1</li>
+<ul>
+<li><a href="../html-lat/SNB/MOVSD_XMM_XMM_M64-IACA2.1.html">Latency:</a> 6</li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/SNB/MOVSD_XMM_XMM_M64-IACA2.1.html">IACA:</a> 0.50
+ (with the -no_interiteration flag: 0.50)
+</li>
+</ul></li>
+<li><a href="../html-tp/SNB/MOVSD_XMM_XMM_M64-IACA2.1.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/SNB/MOVSD_XMM_XMM_M64-IACA2.1.html">Port usage:</a> 1*p23</li>
+</ul>
+<li>IACA 2.2</li>
+<ul>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/SNB/MOVSD_XMM_XMM_M64-IACA2.2.html">IACA:</a> 0.50
+ (with the -no_interiteration flag: 0.50)
+</li>
+</ul></li>
+<li><a href="../html-tp/SNB/MOVSD_XMM_XMM_M64-IACA2.2.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/SNB/MOVSD_XMM_XMM_M64-IACA2.2.html">Port usage:</a> 1*p23</li>
+</ul>
+<li>IACA 2.3</li>
+<ul>
+<li>Throughput<ul>
+<li>Computed from the port usage: 0.50</li>
+<li><a href="../html-tp/SNB/MOVSD_XMM_XMM_M64-IACA2.3.html">IACA:</a> 0.50
+</li>
+</ul></li>
+<li><a href="../html-tp/SNB/MOVSD_XMM_XMM_M64-IACA2.3.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/SNB/MOVSD_XMM_XMM_M64-IACA2.3.html">Port usage:</a> 1*p23</li>
+</ul>
+</ul>
+<hr><h2 id="WSM">Westmere</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/WSM/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;6</li>
+<li>
+<a href="../html-lat/WSM/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;6</li>
+<li>
+<a href="../html-lat/WSM/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;5</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 1.00</li>
+<li><a href="../html-tp/WSM/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 1.00</li>
+<li><a href="../html-tp/WSM/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 1.00</li>
+</ul></li>
+<li><a href="../html-tp/WSM/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/WSM/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p2</li>
+</ul>
+<li>IACA 2.1</li>
+<ul>
+<li><a href="../html-lat/WSM/MOVSD_XMM_XMM_M64-IACA2.1.html">Latency:</a> 6</li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 1.00</li>
+<li><a href="../html-tp/WSM/MOVSD_XMM_XMM_M64-IACA2.1.html">IACA:</a> 1.00
+ (with the -no_interiteration flag: 1.00)
+</li>
+</ul></li>
+<li><a href="../html-tp/WSM/MOVSD_XMM_XMM_M64-IACA2.1.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/WSM/MOVSD_XMM_XMM_M64-IACA2.1.html">Port usage:</a> 1*p2</li>
+</ul>
+<li>IACA 2.2</li>
+<ul>
+<li>Throughput<ul>
+<li>Computed from the port usage: 1.00</li>
+<li><a href="../html-tp/WSM/MOVSD_XMM_XMM_M64-IACA2.2.html">IACA:</a> 1.00
+ (with the -no_interiteration flag: 1.00)
+</li>
+</ul></li>
+<li><a href="../html-tp/WSM/MOVSD_XMM_XMM_M64-IACA2.2.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/WSM/MOVSD_XMM_XMM_M64-IACA2.2.html">Port usage:</a> 1*p2</li>
+</ul>
+</ul>
+<hr><h2 id="NHM">Nehalem</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/NHM/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;6</li>
+<li>
+<a href="../html-lat/NHM/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;6</li>
+<li>
+<a href="../html-lat/NHM/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;5</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 1.00</li>
+<li><a href="../html-tp/NHM/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 1.00</li>
+<li><a href="../html-tp/NHM/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 1.00</li>
+</ul></li>
+<li><a href="../html-tp/NHM/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Retire slots: 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+<li><a href="../html-ports/NHM/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p2</li>
+</ul>
+<li>IACA 2.1</li>
+<ul>
+<li><a href="../html-lat/NHM/MOVSD_XMM_XMM_M64-IACA2.1.html">Latency:</a> 6</li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 1.00</li>
+<li><a href="../html-tp/NHM/MOVSD_XMM_XMM_M64-IACA2.1.html">IACA:</a> 1.00
+ (with the -no_interiteration flag: 1.00)
+</li>
+</ul></li>
+<li><a href="../html-tp/NHM/MOVSD_XMM_XMM_M64-IACA2.1.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/NHM/MOVSD_XMM_XMM_M64-IACA2.1.html">Port usage:</a> 1*p2</li>
+</ul>
+<li>IACA 2.2</li>
+<ul>
+<li>Throughput<ul>
+<li>Computed from the port usage: 1.00</li>
+<li><a href="../html-tp/NHM/MOVSD_XMM_XMM_M64-IACA2.2.html">IACA:</a> 1.00
+ (with the -no_interiteration flag: 1.00)
+</li>
+</ul></li>
+<li><a href="../html-tp/NHM/MOVSD_XMM_XMM_M64-IACA2.2.html">Number of  &mu;ops:</a> 1</li>
+<li><a href="../html-ports/NHM/MOVSD_XMM_XMM_M64-IACA2.2.html">Port usage:</a> 1*p2</li>
+</ul>
+</ul>
+<hr><h2 id="WOL">Wolfdale</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/WOL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;3</li>
+<li>
+<a href="../html-lat/WOL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;3</li>
+<li>
+<a href="../html-lat/WOL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 1.00</li>
+<li><a href="../html-tp/WOL/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 1.00</li>
+<li><a href="../html-tp/WOL/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 1.00</li>
+</ul></li>
+<li><a href="../html-tp/WOL/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+</ul></li>
+<li><a href="../html-ports/WOL/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p2</li>
+</ul>
+</ul>
+<hr><h2 id="CON">Conroe</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/CON/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;3</li>
+<li>
+<a href="../html-lat/CON/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;3</li>
+<li>
+<a href="../html-lat/CON/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;4</li>
+</ul></li>
+<li>Throughput<ul>
+<li>Computed from the port usage: 1.00</li>
+<li><a href="../html-tp/CON/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 1.00</li>
+<li><a href="../html-tp/CON/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 1.00</li>
+</ul></li>
+<li><a href="../html-tp/CON/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+</ul></li>
+<li><a href="../html-ports/CON/MOVSD_XMM_XMM_M64-Measurements.html">Port usage:</a> 1*p2</li>
+</ul>
+</ul>
+<hr><h2 id="TRM">Tremont</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/TRM/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;8</li>
+<li>
+<a href="../html-lat/TRM/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;8</li>
+<li>
+<a href="../html-lat/TRM/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;5</li>
+</ul></li>
+<li>Throughput<ul>
+<li><a href="../html-tp/TRM/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/TRM/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/TRM/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+</ul>
+</ul>
+<hr><h2 id="GLP">Goldmont Plus</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/GLP/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/GLP/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/GLP/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;5</li>
+</ul></li>
+<li>Throughput<ul>
+<li><a href="../html-tp/GLP/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 1.00</li>
+<li><a href="../html-tp/GLP/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 1.00</li>
+</ul></li>
+<li><a href="../html-tp/GLP/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+</ul>
+</ul>
+<hr><h2 id="GLM">Goldmont</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/GLM/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/GLM/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/GLM/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;5</li>
+</ul></li>
+<li>Throughput<ul>
+<li><a href="../html-tp/GLM/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 1.00</li>
+<li><a href="../html-tp/GLM/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 1.00</li>
+</ul></li>
+<li><a href="../html-tp/GLM/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+</ul>
+</ul>
+<hr><h2 id="AMT">Airmont</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/AMT/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/AMT/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;7</li>
+<li>
+<a href="../html-lat/AMT/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;6</li>
+</ul></li>
+<li>Throughput<ul>
+<li><a href="../html-tp/AMT/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 1.00</li>
+<li><a href="../html-tp/AMT/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 1.00</li>
+</ul></li>
+<li><a href="../html-tp/AMT/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+</ul>
+</ul>
+<hr><h2 id="BNL">Bonnell</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/BNL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;6</li>
+<li>
+<a href="../html-lat/BNL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;6</li>
+<li>
+<a href="../html-lat/BNL/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;8</li>
+</ul></li>
+<li>Throughput<ul>
+<li><a href="../html-tp/BNL/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 1.00</li>
+<li><a href="../html-tp/BNL/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 1.00</li>
+</ul></li>
+<li><a href="../html-tp/BNL/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+<li>Microcode Sequencer (MS): 0</li>
+</ul></li>
+</ul>
+</ul>
+<hr><h2 id="ZEN5">AMD Zen 5</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/ZEN5/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;8</li>
+<li>
+<a href="../html-lat/ZEN5/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;8</li>
+<li>
+<a href="../html-lat/ZEN5/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;7</li>
+</ul></li>
+<li>Throughput<ul>
+<li><a href="../html-tp/ZEN5/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/ZEN5/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/ZEN5/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+</ul></li>
+</ul>
+<li><a href="https://docs.amd.com/v/u/en-US/58455_1.00" target="_blank">Documentation</a></li>
+<ul>
+<li>Latency: 1</li>
+<li>Throughput: 0.25</li>
+<li>Number of  &mu;ops: 1</li>
+<li>Port usage: FP0/1/2/3</li>
+</ul>
+</ul>
+<hr><h2 id="ZEN4">AMD Zen 4</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/ZEN4/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;8</li>
+<li>
+<a href="../html-lat/ZEN4/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;8</li>
+<li>
+<a href="../html-lat/ZEN4/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;8</li>
+</ul></li>
+<li>Throughput<ul>
+<li><a href="../html-tp/ZEN4/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/ZEN4/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/ZEN4/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+</ul></li>
+</ul>
+</ul>
+<hr><h2 id="ZEN3">AMD Zen 3</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/ZEN3/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;8</li>
+<li>
+<a href="../html-lat/ZEN3/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;8</li>
+<li>
+<a href="../html-lat/ZEN3/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;8</li>
+</ul></li>
+<li>Throughput<ul>
+<li><a href="../html-tp/ZEN3/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/ZEN3/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/ZEN3/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+</ul></li>
+</ul>
+</ul>
+<hr><h2 id="ZEN2">AMD Zen 2</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/ZEN2/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;8</li>
+<li>
+<a href="../html-lat/ZEN2/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;8</li>
+<li>
+<a href="../html-lat/ZEN2/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;7</li>
+</ul></li>
+<li>Throughput<ul>
+<li><a href="../html-tp/ZEN2/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/ZEN2/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/ZEN2/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+</ul></li>
+</ul>
+</ul>
+<hr><h2 id="ZEN+">AMD Zen+</h2>
+<ul>
+<li>Measurements</li>
+<ul>
+<li>Latencies<ul>
+<li>
+<a href="../html-lat/ZEN+/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr">Latency operand 2 &rarr; 1 (address, base register):</a>
+ &le;8</li>
+<li>
+<a href="../html-lat/ZEN+/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_addr_index">Latency operand 2 &rarr; 1 (address, index register):</a>
+ &le;8</li>
+<li>
+<a href="../html-lat/ZEN+/MOVSD_XMM_XMM_M64-Measurements.html#lat2->1_mem">Latency operand 2 &rarr; 1 (memory):</a>
+ &le;7</li>
+</ul></li>
+<li>Throughput<ul>
+<li><a href="../html-tp/ZEN+/MOVSD_XMM_XMM_M64-Measurements.html">Measured (loop):</a> 0.50</li>
+<li><a href="../html-tp/ZEN+/MOVSD_XMM_XMM_M64-Measurements.html">Measured (unrolled):</a> 0.50</li>
+</ul></li>
+<li><a href="../html-tp/ZEN+/MOVSD_XMM_XMM_M64-Measurements.html">Number of &mu;ops</a><ul>
+<li>Executed: 1</li>
+</ul></li>
+</ul>
+</ul></body>
+</html>

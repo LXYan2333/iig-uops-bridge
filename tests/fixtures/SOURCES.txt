@@ -9,4 +9,6 @@ https://uops.info/html-instr/VCVTQQ2PD_Z_ZMM_K_ZMM.html
 https://uops.info/html-instr/VGATHERQPD_ZMM_K_VSIB_ZMM.html
 Additional uops.info HTML snapshot (2026-10-23):
 https://uops.info/html-instr/VPSHRDQ_ZMM_ZMM_ZMM_I8.html
+Additional uops.info HTML snapshot (2026-10-29):
+https://uops.info/html-instr/MOVSD_XMM_XMM_M64.html
 These snapshots support offline parser/regression tests; they are not executed in the production script.
