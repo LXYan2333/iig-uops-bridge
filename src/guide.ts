@@ -1,9 +1,21 @@
 import { byName } from './data';
 import { clean } from './parser';
+import { techFamilies, type TechFamily } from './architecture-families';
 import type { Instruction, Intrinsic } from './types';
 
 const normalizeType = (s: string) => s.replace(/\s+/g, '').toLowerCase();
 const sameList = (a: string[], b: string[]) => a.length === b.length && a.every((s, i) => s === b[i]);
+
+export function readTechFamilyColors(doc: Document = document): Record<TechFamily, string> {
+  return Object.fromEntries(techFamilies.map(family => {
+    const node = doc.querySelector(`#techs ${family.selector}`);
+    const style = node && doc.defaultView?.getComputedStyle(node);
+    // Guide encodes its family palette in borders, not in the black label text.
+    const color = style?.borderLeftColor;
+    const visible = style?.borderLeftStyle && style.borderLeftStyle !== 'none' && style.borderLeftStyle !== 'hidden';
+    return [family.id, visible && color && color !== 'transparent' && !/rgba\([^)]*,\s*0\s*\)/.test(color) ? color : family.color];
+  })) as Record<TechFamily, string>;
+}
 // Mark only the Guide's native section; CSS controls visibility without deleting its data.
 export function markNativePerformance(list: Element) {
   for (const heading of list.querySelectorAll('.intrinsic .details > h1')) {

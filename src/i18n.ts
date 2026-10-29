@@ -1,5 +1,7 @@
 /** Chinese source keys form the complete catalog; English must cover every key. */
 export const english = {
+  "* Alder Lake-P 消费级产品大多已屏蔽 AVX-512；部分早期桌面型号需关闭 E 核并使用兼容的 BIOS／微码才可能启用。": "* AVX-512 is disabled on most consumer Alder Lake-P products. Some early desktop models may enable it with E-cores disabled and compatible BIOS/microcode.",
+  "未分类": "Unclassified",
   "不支持所需指令集": "Required instruction set not supported",
   "架构支持，暂无测量数据": "Architecture supports it; no measurements",
   "支持情况取决于具体型号": "Support depends on the specific model",

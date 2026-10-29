@@ -19,3 +19,8 @@ See LLVM-LICENSE.txt for license information.
 The pinned revisions and source hashes are recorded in scripts/support-sources.json.
 The bridge extracts model memberships and evaluates ISA requirements; these
 derived results and conservative policy rules are not upstream endorsements.
+
+Tooltip positioning uses @floating-ui/dom, @floating-ui/core and @floating-ui/utils
+(MIT): https://github.com/floating-ui/floating-ui
+Copyright (c) 2021-present Floating UI contributors
+See FLOATING-UI-LICENSE.txt for license information.

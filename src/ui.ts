@@ -4,6 +4,9 @@ import { matchInstruction } from './match';
 import { latencySummary } from './parser';
 import { PerformanceService } from './service';
 import { assessSupport, isaLabel, supportVersions, type SupportAssessment } from './support';
+import { architectureFamily, techFamilies } from './architecture-families';
+import { readTechFamilyColors } from './guide';
+import { attachTooltip } from './tooltip';
 import type { Intrinsic, MatchResult, PageResult, Settings, Variant } from './types';
 import css from './style.css';
 
@@ -302,7 +305,9 @@ export function toolbar(settings: Settings, change: (s: Settings) => void, servi
     for (const checkbox of archChoices.querySelectorAll<HTMLInputElement>('input')) checkbox.checked = settings.arches.includes(checkbox.value);
   }
   let hideNative: HTMLInputElement;
+  let cleanupTooltip: (() => void) | undefined;
   function render() {
+    cleanupTooltip?.();
     host.lang = getLanguage();
     const bar = el('div', undefined, 'toolbar');
     bar.append(el('span', t('uops.info 桥接'), 'brand'));
@@ -310,18 +315,46 @@ export function toolbar(settings: Settings, change: (s: Settings) => void, servi
     archSummary = el('summary'); picker.append(archSummary);
     archChoices = el('fieldset', undefined, 'architecture-choices architecture-vendors');
     archChoices.append(el('legend', t('感兴趣架构'), 'sr-only'));
+    const colors = readTechFamilyColors();
+    const familyOf = new Map(architectures.map(a => [a.id, architectureFamily(a.id)]));
     for (const vendor of ['Intel', 'AMD']) {
       const group = el('fieldset', undefined, `architecture-vendor ${vendor.toLowerCase()}`);
       group.append(el('legend', vendor));
       const choices = el('div', undefined, 'vendor-choices');
-      for (const a of architectures.filter(a => a.name.startsWith('AMD ') === (vendor === 'AMD'))) {
-        const checkbox = el('input'); checkbox.type = 'checkbox'; checkbox.value = a.id;
-        const label = el('label'); label.append(checkbox, document.createTextNode(a.name)); choices.append(label);
-        checkbox.addEventListener('change', () => change({ ...settings, arches: checkbox.checked ? [...settings.arches, a.id] : settings.arches.filter(id => id !== a.id) }));
+      for (const family of techFamilies) {
+        const members = architectures.filter(a => a.name.startsWith('AMD ') === (vendor === 'AMD') && familyOf.get(a.id) === family.id);
+        if (!members.length) continue;
+        const row = el('div', undefined, 'architecture-family'); row.dataset.family = family.id;
+        row.setAttribute('role', 'group'); row.setAttribute('aria-label', family.id === 'unknown' ? t('未分类') : family.label);
+        row.style.setProperty('--family-color', colors[family.id]);
+        for (const a of members) {
+          const checkbox = el('input'); checkbox.type = 'checkbox'; checkbox.value = a.id;
+          const label = el('label'); label.title = family.id === 'unknown' ? t('未分类') : family.label;
+          label.append(checkbox, document.createTextNode(a.name)); row.append(label);
+          if (a.id === 'ADL-P') {
+            const marker = el('sup', '*'); marker.setAttribute('aria-hidden', 'true'); label.append(marker);
+            label.removeAttribute('title');
+            const note = el('div', t('* Alder Lake-P 消费级产品大多已屏蔽 AVX-512；部分早期桌面型号需关闭 E 核并使用兼容的 BIOS／微码才可能启用。'), 'architecture-tooltip');
+            note.id = 'alder-lake-avx512-note'; note.setAttribute('role', 'tooltip'); note.hidden = true;
+            group.append(note);
+            checkbox.setAttribute('aria-describedby', 'alder-lake-avx512-note');
+            cleanupTooltip = attachTooltip(label, note, picker);
+          }
+          checkbox.addEventListener('change', () => change({ ...settings, arches: checkbox.checked ? [...settings.arches, a.id] : settings.arches.filter(id => id !== a.id) }));
+        }
+        choices.append(row);
       }
-      group.append(choices); archChoices.append(group);
+      group.append(choices);
+      archChoices.append(group);
     }
     refreshArches(); picker.append(archChoices);
+    picker.addEventListener('toggle', () => {
+      if (!picker.open) return;
+      const liveColors = readTechFamilyColors();
+      for (const family of techFamilies) {
+        for (const row of archChoices.querySelectorAll<HTMLElement>(`[data-family="${family.id}"]`)) row.style.setProperty('--family-color', liveColors[family.id]);
+      }
+    });
     mode = el('select'); mode.setAttribute('aria-label', t('展示方式'));
     for (const [id, label] of [['inline', t('详情内自动显示')], ['click', t('点击后展开')], ['sidebar', t('固定右侧栏')]]) mode.append(new Option(label, id));
     mode.value = settings.mode;

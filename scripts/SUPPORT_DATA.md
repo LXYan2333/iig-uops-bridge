@@ -77,3 +77,29 @@ CPUID bindings, and the resulting JSON diff. Update third-party notices/licenses
 if necessary. Run `python3 -m unittest discover -s tests -p '*_test.py'`, `npm test`,
 and both Playwright browser projects. Licenses are retained in `third_party/`
 and included in the installable userscript.
+
+## Picker family colors
+
+The architecture picker uses the highest confirmed family among MMX, SSE, AVX,
+AVX-512 and AMX. AVX2 shares the Guide's AVX color. As an explicit display
+exception, Alder Lake-P is grouped with AVX-512 and a tooltip (on hover or keyboard focus) explains
+that most consumer parts disable it. Some early desktop parts may enable it
+with E-cores disabled and compatible BIOS/microcode. E-cores stay in AVX;
+instruction assessments still report conditional support for P-core AVX-512.
+See [Intel's fuse-off notice](https://www.intel.com/content/www/us/en/support/articles/000089918/processors.html)
+and the [ASUS Intel 600 series BIOS manual](https://dlcdnets.asus.com/pub/ASUS/mb/13MANUAL/PRIME_PROART_TUF_GAMING_Intel_600_Series_BIOS_EM_WEB_EN.pdf).
+Emerald Rapids uses AMX.
+
+For the display only, Conroe/Wolfdale/Airmont use SSE and Kaby Lake/Coffee Lake
+use AVX. These coarse family hints do not supply missing XED/LLVM model aliases
+or change instruction-level support decisions. They refer to the Core 2,
+Celeron N3000, i7-7700 and i7-8700K machines identified on
+[uops.info](https://uops.info/background.html); see also
+[Intel N3000 specifications](https://www.intel.com/content/www/us/en/products/sku/87259/intel-celeron-processor-n3000-2m-cache-up-to-2-08-ghz/specifications.html)
+and [GCC x86 architecture descriptions](https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html).
+Unrecognized architectures are shown in a neutral, unclassified group.
+
+Colors come from computed family border colors in the current Guide's `#techs`,
+refreshed when the picker opens. If the filters/styles are unavailable, the
+attributed `tests/fixtures/guide-style.css` palette provides the fallback.
+Grouping is by Intel family only; there is no Highway dependency.

@@ -266,3 +266,97 @@ test('a failed request preserves static support information and a retry control'
   await expect(c.locator('.metric-table')).toHaveCount(0);
   await expect(c).not.toContainText('no measurements');
 });
+
+test('groups architecture text by the live Guide family palette while preserving vendor panels', async ({ page }) => {
+  await setup(page, 'inline', 'en');
+  const picker = page.locator('.architecture-picker');
+  await picker.locator('summary').click();
+  await expect(picker.locator('.intel input')).toHaveCount(29);
+  await expect(picker.locator('.amd input')).toHaveCount(5);
+  await expect(picker.locator('.intel .architecture-family')).toHaveCount(4);
+  await expect(picker.locator('.amd .architecture-family')).toHaveCount(2);
+  for (const [arch, family, selector] of [['WSM', 'sse', '.SSE_ALL'], ['SNB', 'avx', '.AVX_ALL'], ['ZEN3', 'avx', '.AVX_ALL'], ['TGL', 'avx512', '.AVX_512'], ['ADL-P', 'avx512', '.AVX_512'], ['ADL-E', 'avx', '.AVX_ALL'], ['ZEN4', 'avx512', '.AVX_512'], ['EMR', 'amx', '.AMX']]) {
+    const label = picker.locator(`[data-family="${family}"] label`).filter({ has: page.locator(`input[value="${arch}"]`) });
+    const color = await page.locator(`#techs ${selector}`).evaluate(node => getComputedStyle(node).borderLeftColor);
+    await expect(label).toHaveCSS('color', color);
+  }
+  const alderLake = picker.getByRole('checkbox', { name: 'Alder Lake-P', exact: true });
+  await expect(alderLake).toHaveAccessibleDescription(/AVX-512 is disabled on most consumer/);
+  const tooltip = picker.locator('[role="tooltip"]');
+  await expect(tooltip).toBeHidden();
+  await alderLake.locator('..').hover();
+  await expect(tooltip).toBeVisible();
+  const anchorBox = (await alderLake.locator('..').boundingBox())!;
+  const tooltipBox = (await tooltip.boundingBox())!;
+  expect(tooltipBox.y + tooltipBox.height).toBeLessThanOrEqual(anchorBox.y + 1);
+  await tooltip.hover();
+  await expect(tooltip).toBeVisible();
+  await picker.locator('summary').hover();
+  await expect(tooltip).toBeHidden();
+  await alderLake.focus();
+  await expect(tooltip).toBeVisible();
+  await alderLake.press('Escape');
+  await expect(tooltip).toBeHidden();
+  const rows = await picker.locator('.intel .architecture-family').all();
+  for (let i = 1; i < rows.length; i++) {
+    const previous = (await rows[i - 1].boundingBox())!; const next = (await rows[i].boundingBox())!;
+    expect(next.y).toBeGreaterThanOrEqual(previous.y + previous.height);
+  }
+  await expect(picker.locator('.intel')).toHaveCSS('background-color', 'rgb(242, 248, 253)');
+  await expect(picker.locator('.amd')).toHaveCSS('background-color', 'rgb(255, 246, 245)');
+  await expect(picker.locator('.intel')).toHaveCSS('border-left-color', 'rgb(200, 223, 239)');
+  await expect(picker.locator('.amd')).toHaveCSS('border-left-color', 'rgb(239, 206, 206)');
+  await picker.locator('summary').click();
+  await page.locator('#techs .AVX_ALL').evaluate(node => { (node as HTMLElement).style.borderColor = 'rgb(20, 80, 40)'; });
+  await picker.locator('summary').click();
+  await expect(picker.locator('.intel [data-family="avx"] label').first()).toHaveCSS('color', 'rgb(20, 80, 40)');
+  await expect(picker.locator('.amd [data-family="avx"] label').first()).toHaveCSS('color', 'rgb(20, 80, 40)');
+});
+
+test('keeps the tooltip in the viewport when scrolling, resizing and switching language', async ({ page }) => {
+  await setup(page, 'inline', 'en');
+  await page.setViewportSize({ width: 640, height: 500 });
+  const toolbar = page.locator('[data-iig-uops="toolbar"]');
+  // Keep the real toolbar and enough document height to exercise viewport edges.
+  await toolbar.evaluate(host => {
+    document.body.replaceChildren(host);
+    document.body.style.cssText = 'margin:0;padding:200px 12px 1200px;min-width:0';
+    host.style.width = '100%';
+  });
+  const picker = toolbar.locator('.architecture-picker');
+  await picker.locator('summary').click();
+  const alderLake = picker.getByRole('checkbox', { name: 'Alder Lake-P', exact: true });
+  const tooltip = picker.locator('[role="tooltip"]');
+  await alderLake.scrollIntoViewIfNeeded();
+  await alderLake.locator('..').evaluate(node => {
+    const bounds = node.getBoundingClientRect();
+    window.scrollBy(0, bounds.bottom - (innerHeight - 8));
+  });
+  await alderLake.evaluate(node => (node as HTMLElement).focus({ preventScroll: true }));
+  await expect(tooltip).toBeVisible();
+  await expect(tooltip).toHaveAttribute('data-placement', /^top/);
+  await alderLake.locator('..').evaluate(node => window.scrollBy(0, node.getBoundingClientRect().top - 8));
+  await expect(tooltip).toHaveAttribute('data-placement', /^bottom/);
+  const checkBounds = async () => {
+    await expect(tooltip).toBeVisible();
+    await expect.poll(async () => {
+      const box = (await tooltip.boundingBox())!;
+      const viewport = page.viewportSize()!;
+      return box.x >= 7 && box.y >= 7 && box.x + box.width <= viewport.width - 7 && box.y + box.height <= viewport.height - 7;
+    }).toBe(true);
+  };
+  await checkBounds();
+  await page.setViewportSize({ width: 560, height: 420 });
+  await checkBounds();
+  // Change language without blurring first: rerendering must dispose the open tooltip.
+  await toolbar.getByRole('combobox', { name: 'Language', exact: true }).evaluate(node => {
+    (node as HTMLSelectElement).value = 'zh-CN'; node.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await expect(tooltip).toHaveCount(1);
+  await expect(tooltip).toBeHidden();
+  await alderLake.focus();
+  await expect(tooltip).toContainText('消费级产品大多已屏蔽');
+  await checkBounds();
+  await alderLake.press('Escape');
+  await expect(tooltip).toBeHidden();
+});

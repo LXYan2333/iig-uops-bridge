@@ -21,7 +21,7 @@ const header = `// ==UserScript==
 // @noframes
 // ==/UserScript==`;
 await mkdir('dist', { recursive: true });
-const notices = (await Promise.all(['NOTICE.txt', 'XED-LICENSE.txt', 'LLVM-LICENSE.txt'].map(name =>
+const notices = (await Promise.all(['NOTICE.txt', 'XED-LICENSE.txt', 'LLVM-LICENSE.txt', 'FLOATING-UI-LICENSE.txt'].map(name =>
   readFile(new URL(`../third_party/${name}`, import.meta.url), 'utf8')))).join('\n\n');
 if (notices.includes('*/')) throw new Error('Unsafe license comment terminator');
 await build({ entryPoints: ['src/main.ts'], bundle: true, outfile: 'dist/iig-uops-bridge.user.js',
