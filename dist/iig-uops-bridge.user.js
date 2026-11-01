@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Intel Guide → uops.info
 // @namespace    iig-uops-bridge
-// @version      1.1.2
+// @version      1.1.3
 // @updateURL    https://github.com/LXYan2333/iig-uops-bridge/releases/latest/download/iig-uops-bridge.user.js
 // @downloadURL  https://github.com/LXYan2333/iig-uops-bridge/releases/latest/download/iig-uops-bridge.user.js
 // @description  View uops.info measurements for your selected microarchitectures in Intel Intrinsics Guide
