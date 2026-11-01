@@ -13,7 +13,20 @@
 3. 从[最新 Release](https://github.com/LXYan2333/iig-uops-bridge/releases/latest) 下载 **[iig-uops-bridge.user.js](https://github.com/LXYan2333/iig-uops-bridge/releases/latest/download/iig-uops-bridge.user.js)**，请选择 `.user.js` 附件，不要下载源码压缩包。如果 Tampermonkey 自动打开安装页，确认安装即可；否则打开其仪表板 → **实用工具 → 从文件导入**，选择刚下载的文件。
 4. 刷新 [Intel Intrinsics Guide](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html)，修改上述浏览器权限后也需要刷新页面。搜索框下面会出现 **uops.info 桥接**工具栏。
 
-安装使用的是已经构建好的单文件脚本，不需要 Node.js、Python 或本地服务。脚本没有配置远程自动更新地址；更新时从最新 Release 下载并重新导入脚本。
+安装使用的是已经构建好的单文件脚本，不需要 Node.js、Python 或本地服务。
+
+## 自动更新
+
+脚本内置 `@updateURL` 和 `@downloadURL`，都指向同一个固定的[最新 Release 脚本地址](https://github.com/LXYan2333/iig-uops-bridge/releases/latest/download/iig-uops-bridge.user.js)。在 Tampermonkey 中保持此脚本的更新检查开启，它会按配置的周期检查，并按你的更新设置安装新版本；发布 Release 不会立即向浏览器推送更新。更新后刷新 Guide 页面即可。
+
+**已安装 v1.1.2 或更早版本的用户**可一次性启用：在 Tampermonkey 编辑器中打开此脚本，把以下两行添加到开头的元数据区内、`// ==/UserScript==` 之前，然后保存：
+
+```js
+// @updateURL    https://github.com/LXYan2333/iig-uops-bridge/releases/latest/download/iig-uops-bridge.user.js
+// @downloadURL  https://github.com/LXYan2333/iig-uops-bridge/releases/latest/download/iig-uops-bridge.user.js
+```
+
+在此脚本的设置中启用更新检查，并清除固定到旧版本的自定义更新地址覆盖。保留脚本名称、namespace 和版本号。也可以等包含这些字段的版本发布后，覆盖安装一次；以后会一直使用同一个链接更新。手动下载并导入仍然可用。
 
 ## 使用
 
@@ -130,7 +143,7 @@ npm test
 
 首次可在 **Actions → Update instruction index → Run workflow** 手动运行。审核并合并生成的 PR 后，默认分支的索引与脚本才会更新。GitHub 可能要求审批由 `GITHUB_TOKEN` 创建的 PR 的 CI 运行；出现提示时点击 PR 中的 **Approve workflows to run**。更新工作流自身已经在创建 PR 前执行测试。参见 [GitHub 工作流触发规则](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow#triggering-a-workflow-from-a-workflow)。
 
-正式版本从 [Releases](https://github.com/LXYan2333/iig-uops-bridge/releases/latest) 安装；构建 artifact 可用于测试尚未发布的提交。索引更新不会自动合并 PR 或发布 Release；审核并合并后，推送版本 tag 即可发布。浏览器内已安装的脚本通过导入新版本更新。上游网站不可用时，更新失败不会改变默认分支；恢复后可重新运行。定时任务只在默认分支运行，可能延迟或因仓库长期无活动而被停用；停止更新时请检查 Actions 页面。
+正式版本从 [Releases](https://github.com/LXYan2333/iig-uops-bridge/releases/latest) 安装；构建 artifact 可用于测试尚未发布的提交。索引更新不会自动合并 PR 或发布 Release；审核并合并后，推送版本 tag 即可发布。配置好自动更新的脚本会跟随最新发布的 Release；每次发布都必须通过 `package.json` 提升 `@version`。上游网站不可用时，更新失败不会改变默认分支；恢复后可重新运行。定时任务只在默认分支运行，可能延迟或因仓库长期无活动而被停用；停止更新时请检查 Actions 页面。
 
 ## 发布版本
 

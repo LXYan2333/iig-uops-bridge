@@ -13,7 +13,20 @@ A Tampermonkey userscript that brings uops.info measurements into the Intel Intr
 3. Download **[iig-uops-bridge.user.js](https://github.com/LXYan2333/iig-uops-bridge/releases/latest/download/iig-uops-bridge.user.js)** from the [latest release](https://github.com/LXYan2333/iig-uops-bridge/releases/latest). Choose the `.user.js` asset, not the source-code archive. If Tampermonkey opens an installation page, confirm installation. Otherwise, open its dashboard, go to **Utilities → Import from file**, and select the downloaded file.
 4. Reload the [Intel Intrinsics Guide](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html), including after changing the browser permission. A **uops.info bridge** toolbar will appear below the search box.
 
-The bundled script is ready to install: no Node.js, Python, or local server is needed. Remote automatic updates are not configured; download and import the script from the latest release when updating. The interface supports English and Simplified Chinese. It follows your preferred browser language on first use (English for other languages); an explicit selection is saved across visits.
+The bundled script is ready to install: no Node.js, Python, or local server is needed. The interface supports English and Simplified Chinese. It follows your preferred browser language on first use (English for other languages); an explicit selection is saved across visits.
+
+## Automatic updates
+
+The script includes `@updateURL` and `@downloadURL` pointing to the same permanent [latest-release script URL](https://github.com/LXYan2333/iig-uops-bridge/releases/latest/download/iig-uops-bridge.user.js). Keep update checking enabled for this script in Tampermonkey. Tampermonkey checks on its configured schedule and installs newer versions according to your update settings; a release does not immediately push an update to the browser. Reload the Guide after updating.
+
+For **v1.1.2 or earlier**, enable updates once by opening the script in the Tampermonkey editor and adding these lines inside its metadata block, before `// ==/UserScript==`, then saving:
+
+```js
+// @updateURL    https://github.com/LXYan2333/iig-uops-bridge/releases/latest/download/iig-uops-bridge.user.js
+// @downloadURL  https://github.com/LXYan2333/iig-uops-bridge/releases/latest/download/iig-uops-bridge.user.js
+```
+
+Enable update checking in the script's settings, and remove any custom update URL override that pins it to an older release. Keep its name, namespace and version unchanged. Alternatively, once a release containing these metadata fields is published, install it over the existing script once. Future updates then use the same URL. Manual download/import remains available.
 
 ## Usage
 
@@ -140,7 +153,7 @@ To enable updates, put the workflows on the repository's default branch and allo
 
 Use **Actions → Update instruction index → Run workflow** for the first run. Review and merge its PR to update the default branch. GitHub may require approval before running CI on a PR created by `GITHUB_TOKEN`; use **Approve workflows to run** on the PR when prompted. The update workflow already runs its own tests before creating the PR. See [GitHub's workflow-trigger rules](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow#triggering-a-workflow-from-a-workflow).
 
-Install published versions from [Releases](https://github.com/LXYan2333/iig-uops-bridge/releases/latest). Build artifacts are also available for testing unpublished commits. Index updates do not automatically merge PRs or publish releases; push a version tag after reviewing and merging an update. Installed scripts are updated by importing the new release file. Upstream site outages can fail an update without changing the default branch; retry the workflow after the source becomes available. GitHub schedules run on the default branch and may be delayed or disabled by repository inactivity; check the Actions tab if updates stop.
+Install published versions from [Releases](https://github.com/LXYan2333/iig-uops-bridge/releases/latest). Build artifacts are also available for testing unpublished commits. Index updates do not automatically merge PRs or publish releases; push a version tag after reviewing and merging an update. Installed scripts with automatic updates configured follow the latest published release; every release must increase `@version` via `package.json`. Upstream site outages can fail an update without changing the default branch; retry the workflow after the source becomes available. GitHub schedules run on the default branch and may be delayed or disabled by repository inactivity; check the Actions tab if updates stop.
 
 ## Publishing a release
 
